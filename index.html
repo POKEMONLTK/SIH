@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Guidance System — Digital Twin</title>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js"
+    }
+  }
+  </script>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand"><span class="brand-dot"></span>GUIDANCE SYSTEM</div>
+  <div class="topbar-center">DIGITAL TWIN / SYNTHETIC SIMULATION</div>
+  <div class="topbar-right">
+    <span id="connection">SIMULATION READY</span>
+    <span id="pageNumber">01 / 05</span>
+  </div>
+</header>
+
+<main>
+
+  <!-- 01 / INTRO -->
+  <section class="scene scene-intro" id="scene1">
+    <div class="section-number">01</div>
+
+    <div class="intro-copy">
+      <p class="eyebrow">SYNTHETIC FLIGHT ENVIRONMENT</p>
+      <h1>UNDERSTAND<br>THE <em>FLIGHT.</em></h1>
+      <p class="lead">A live digital representation of simulated flight, navigation and sensor state.</p>
+
+      <button id="startBtn" class="outline-btn">START SIMULATION</button>
+
+      <div class="intro-status">
+        <div>
+          <span>STATE</span>
+          <strong id="state">STANDBY</strong>
+        </div>
+        <div>
+          <span>TIME</span>
+          <strong id="time">00:00.0</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="twin-panel">
+      <div class="panel-heading">
+        <span>LIVE POSITION <strong id="heroPosition">0000 / 0000 / 0000</strong></span>
+        <span>3D DIGITAL TWIN</span>
+      </div>
+      <div id="twinContainer" class="three-panel"></div>
+      <div class="panel-foot">SCROLL TO EXPLORE ↓</div>
+    </div>
+  </section>
+
+  <!-- 02 / FLIGHT STATE -->
+  <section class="scene scene-state" id="scene2">
+    <div class="section-number">02</div>
+    <p class="eyebrow">FLIGHT STATE</p>
+    <h2>ONE FLIGHT.<br>ONE CONTINUOUS STATE.</h2>
+
+    <div class="state-layout">
+      <div class="altitude-readout">
+        <span>ALTITUDE</span>
+        <strong id="altitude">0</strong><small>m</small>
+      </div>
+
+      <div class="chart-block">
+        <div class="chart-title">ALTITUDE / SIMULATED</div>
+        <canvas id="altitudeGraph"></canvas>
+      </div>
+
+      <div class="metric-stack">
+        <div><span>VELOCITY</span><strong id="velocity">0</strong><small>m/s</small></div>
+        <div><span>ACCELERATION</span><strong id="acceleration">0.0</strong><small>m/s²</small></div>
+        <div><span>FLIGHT TIME</span><strong id="flightTime">0.0</strong><small>s</small></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 / NAVIGATION -->
+  <section class="scene scene-navigation" id="scene3">
+    <div class="section-number">03</div>
+
+    <div class="nav-copy">
+      <p class="eyebrow">NAVIGATION / STATE ESTIMATION</p>
+      <h2>REFERENCE<br>VS ESTIMATE.</h2>
+    </div>
+
+    <div class="navigation-panel">
+      <div id="navigation3D"></div>
+      <div class="nav-overlay">
+        <div><span class="legend-line reference-line"></span>REFERENCE</div>
+        <div><span class="legend-line estimate-line"></span>ESTIMATE</div>
+        <div class="nav-state">LIVE STATE <strong id="nav3DPosition">000 / 000 / 000</strong></div>
+      </div>
+    </div>
+
+    <div class="axis-readouts">
+      <div><span>X POSITION</span><strong id="posX">0.00</strong><small>m</small></div>
+      <div><span>Y POSITION</span><strong id="posY">0.00</strong><small>m</small></div>
+      <div><span>Z POSITION</span><strong id="posZ">0.00</strong><small>m</small></div>
+      <div><span>ESTIMATION ERROR</span><strong id="error">0.00</strong><small>m</small></div>
+    </div>
+  </section>
+
+  <!-- 04 / SENSOR FUSION -->
+  <section class="scene scene-sensors" id="scene4">
+    <div class="section-number">04</div>
+    <p class="eyebrow">SENSOR FUSION</p>
+    <h2>MEASURE.<br>COMPARE.<br><em>ESTIMATE.</em></h2>
+
+    <div class="sensor-grid">
+      <article class="sensor-card">
+        <header><span>01</span><strong>ACCELEROMETER</strong><small>m/s²</small></header>
+        <canvas id="accelGraph"></canvas>
+        <div class="sensor-value" id="accelValue">0.00</div>
+      </article>
+
+      <article class="sensor-card">
+        <header><span>02</span><strong>GYROSCOPE</strong><small>rad/s</small></header>
+        <canvas id="gyroGraph"></canvas>
+        <div class="sensor-value" id="gyroValue">0.000</div>
+      </article>
+
+      <article class="sensor-card">
+        <header><span>03</span><strong>POSITION</strong><small>m</small></header>
+        <canvas id="positionGraph"></canvas>
+        <div class="sensor-value" id="positionValue">0.0</div>
+      </article>
+    </div>
+
+    <p class="section-note">Synthetic sensor streams are generated locally for demonstration and visualization.</p>
+  </section>
+
+  <!-- 05 / TRACE -->
+  <section class="scene scene-trace" id="scene5">
+    <div class="section-number">05</div>
+    <div class="trace-heading">
+      <p class="eyebrow">SYSTEM TRACE</p>
+      <h2>EVERY STATE<br>LEAVES A TRACE.</h2>
+    </div>
+
+    <div class="trace-layout">
+      <div class="trace-summary">
+        <span>SIMULATION WINDOW</span>
+        <strong>25.0 s</strong>
+        <p>Telemetry, estimated state and sensor values are updated from one shared synthetic state source.</p>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-row"><time>00.0</time><span>INITIAL STATE</span><b>READY</b></div>
+        <div class="timeline-row"><time>05.0</time><span>STATE PROPAGATION</span><b>ACTIVE</b></div>
+        <div class="timeline-row"><time>10.0</time><span>SENSOR UPDATE</span><b>FUSED</b></div>
+        <div class="timeline-row"><time>15.0</time><span>ESTIMATION CHECK</span><b>TRACKING</b></div>
+        <div class="timeline-row"><time>20.0</time><span>TRAJECTORY UPDATE</span><b>ACTIVE</b></div>
+        <div class="timeline-row"><time>25.0</time><span>SIMULATION END</span><b>COMPLETE</b></div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+      <span>155MM / DIGITAL TWIN</span>
+      <span>SYNTHETIC DATA · DEMONSTRATION</span>
+    </footer>
+  </section>
+
+</main>
+
+<script type="module" src="dashboard.js"></script>
+</body>
+</html>
