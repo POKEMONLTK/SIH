@@ -1,0 +1,26 @@
+# Large binaries (>100MB exceeds GitHub limits)
+Antigravity-x64.exe
+*.exe
+!Run_Simulation.exe
+
+# Python Cache & Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+
+# Browser & Temp profiles
+temp_edge_profile/
+*.tmp
+*.log
+
+# IDE & Local Tooling
+.agents/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

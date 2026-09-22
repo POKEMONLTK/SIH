@@ -1,0 +1,507 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover">
+  <meta name="theme-color" content="#040807">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="155mm PGK">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <title>155mm PGK — Interactive Digital Twin & GNC Simulation</title>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "./three.module.js"
+    }
+  }
+  </script>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- TOPBAR NAVIGATION -->
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-dot"></span>
+    155MM PGK / DIGITAL TWIN
+  </div>
+  <div class="topbar-center">6-DOF BALLISTIC &amp; AI/ML GUIDANCE · SIH26098</div>
+  <div class="topbar-right">
+    <button id="togglePlannerBtn" class="topbar-btn active">MISSION CONTROLS [⚙]</button>
+    <button id="openPasteModalBtn" class="topbar-btn">INGEST DATA [📁]</button>
+    <span id="connection">SIMULATION READY</span>
+    <span id="pageNumber">01 / 05</span>
+  </div>
+</header>
+
+<!-- MISSION PLANNER & PARAMETER INPUT DRAWER -->
+<div id="missionDrawer" class="mission-drawer">
+  <div class="drawer-header">
+    <div class="drawer-title">
+      <span class="badge-tag">TACTICAL MISSION PLANNER</span>
+      <h3>155MM ARTILLERY SHELL INPUT PARAMETERS</h3>
+      <p>Configure launch dynamics, environmental winds, guidance authority, or load custom telemetry datasets.</p>
+    </div>
+    <div class="drawer-actions">
+      <button id="closeDrawerBtn" class="drawer-close" title="Close Panel">&times;</button>
+    </div>
+  </div>
+
+  <!-- MISSION PRESETS -->
+  <div class="drawer-presets">
+    <span class="preset-label">MISSION PRESETS:</span>
+    <button class="preset-btn active" data-preset="nominal">155mm L52 Nominal Strike (Guided)</button>
+    <button class="preset-btn" data-preset="unguided">Ballistic Baseline (Unguided CEP ~180m)</button>
+    <button class="preset-btn" data-preset="crosswind">Heavy Crosswind Drift (18 m/s)</button>
+    <button class="preset-btn" data-preset="degraded">GPS Spoofed &amp; TinyML Degraded</button>
+  </div>
+
+  <!-- PARAMETERS FORM -->
+  <div class="params-grid">
+    <!-- Muzzle Velocity -->
+    <div class="param-card">
+      <div class="param-label-row">
+        <span>MUZZLE VELOCITY (v₀)</span>
+        <strong id="valMuzzleVel">827</strong><small>m/s</small>
+      </div>
+      <input type="range" id="inputMuzzleVel" min="450" max="950" step="1" value="827">
+      <div class="param-bounds"><span>450 m/s (Charge 3)</span><span>827 m/s (Charge 6)</span><span>950 m/s (Max)</span></div>
+    </div>
+
+    <!-- Elevation Angle -->
+    <div class="param-card">
+      <div class="param-label-row">
+        <span>LAUNCH ELEVATION (θ₀)</span>
+        <strong id="valElevation">45.0</strong><small>deg</small>
+      </div>
+      <input type="range" id="inputElevation" min="15" max="75" step="0.5" value="45.0">
+      <div class="param-bounds"><span>15° Direct</span><span>45° Max Range</span><span>75° High Angle</span></div>
+    </div>
+
+    <!-- Target Range -->
+    <div class="param-card">
+      <div class="param-label-row">
+        <span>TARGET DOWNRANGE (X_tgt)</span>
+        <strong id="valTargetDist">19.4</strong><small>km</small>
+      </div>
+      <input type="range" id="inputTargetDist" min="6.0" max="32.0" step="0.2" value="19.4">
+      <div class="param-bounds"><span>6.0 km</span><span>19.4 km Nominal</span><span>32.0 km ERFB</span></div>
+    </div>
+
+    <!-- Crosswind -->
+    <div class="param-card">
+      <div class="param-label-row">
+        <span>LATERAL CROSSWIND (W_y)</span>
+        <strong id="valCrosswind">+4.5</strong><small>m/s</small>
+      </div>
+      <input type="range" id="inputCrosswind" min="-25" max="25" step="0.5" value="4.5">
+      <div class="param-bounds"><span>-25 m/s (Left)</span><span>0 m/s (Calm)</span><span>+25 m/s (Right)</span></div>
+    </div>
+
+    <!-- Canard Authority -->
+    <div class="param-card">
+      <div class="param-label-row">
+        <span>CANARD AUTHORITY (δ_max)</span>
+        <strong id="valCanardAuth">10.0</strong><small>deg</small>
+      </div>
+      <input type="range" id="inputCanardAuth" min="0" max="12" step="1" value="10">
+      <div class="param-bounds"><span>0° (Unguided)</span><span>6° (Conservative)</span><span>12° (Max Roll-Steer)</span></div>
+    </div>
+
+    <!-- Sensor Noise & Jamming -->
+    <div class="param-card">
+      <div class="param-label-row">
+        <span>SENSOR &amp; GPS ENVIRONMENT</span>
+      </div>
+      <select id="inputNoiseMode" class="tactical-select">
+        <option value="clean">Nominal (Clean 8-MEMS + NavIC L1/L5)</option>
+        <option value="low">Low Vibration Noise (σ = 0.05g)</option>
+        <option value="jammed">GPS Jammed / Denied (Dead-Reckoning)</option>
+        <option value="spoofed">GPS Spoofed + TinyML Pre-Fail Alert</option>
+      </select>
+      <div class="param-bounds"><span>Chi-Square RAIM Protection</span><span>Adaptive Covariance R_k</span></div>
+    </div>
+
+    <!-- Fuze Mode -->
+    <div class="param-card">
+      <div class="param-label-row">
+        <span>MULTI-MODE FUZE (MEF)</span>
+      </div>
+      <select id="inputFuzeMode" class="tactical-select">
+        <option value="proximity">Proximity Radar (Height of Burst @ 7m AGL)</option>
+        <option value="impact">Point Detonating / Impact (Super-Quick)</option>
+        <option value="delay">Point Detonating (25ms Bunker Delay)</option>
+        <option value="dud">Autonomous Safe Dudding (Inert)</option>
+      </select>
+      <div class="param-bounds"><span>MIL-STD-1316E Dual-Interlock</span><span>STANAG 4369 Induction</span></div>
+    </div>
+
+    <!-- Direct Actions -->
+    <div class="param-card param-actions-card">
+      <div class="param-label-row">
+        <span>DATA INGESTION &amp; RECALCULATION</span>
+      </div>
+      <div class="drawer-button-row">
+        <button id="applyParamsBtn" class="primary-btn">⚡ RECALCULATE &amp; LAUNCH</button>
+        <button id="importFileBtn" class="outline-btn">📁 UPLOAD FILE (JSON/CSV)</button>
+        <input type="file" id="fileInput" accept=".json,.csv" style="display:none">
+        <button id="exportDataBtn" class="outline-btn">💾 EXPORT TELEMETRY</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main>
+
+  <!-- 01 / INTRO & 3D DIGITAL TWIN -->
+  <section class="scene scene-intro" id="scene1">
+    <div class="section-number">01</div>
+
+    <div class="intro-copy">
+      <p class="eyebrow">155MM PRECISION GUIDANCE KIT · DIGITAL TWIN</p>
+      <h1>PRECISION<br>AT <em>MACH 2.4.</em></h1>
+      <p class="lead">Converting standard 155mm unguided artillery shells (M107/ERFB) into precision strike munitions (CEP &lt; 5m) via despun canard roll-steering and TinyML sensor health monitoring.</p>
+
+      <div class="btn-group">
+        <button id="startBtn" class="primary-btn">START SIMULATION</button>
+        <button id="openParamsBtn" class="outline-btn">TACTICAL INPUTS</button>
+        <button id="quickUnguidedBtn" class="ghost-btn">COMPARE UNGUIDED</button>
+      </div>
+
+      <div class="intro-status">
+        <div>
+          <span>FLIGHT STATE</span>
+          <strong id="state">STANDBY</strong>
+        </div>
+        <div>
+          <span>ELAPSED TIME</span>
+          <strong id="time">00:00.0</strong>
+        </div>
+        <div>
+          <span>AIRSPEED</span>
+          <strong id="introMach">MACH 2.43</strong>
+        </div>
+        <div>
+          <span>CANARDS</span>
+          <strong id="introCanardStatus">ARMED (APOGEE)</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="twin-panel">
+      <div class="panel-heading">
+        <span>3D DIGITAL TWIN <strong id="heroPosition">00000 / 00000 / 00000</strong></span>
+        <div class="panel-heading-controls">
+          <button id="viewCutawayBtn" class="cam-toggle-btn active">CUTAWAY CAD</button>
+          <button id="explodeToggleBtn" class="cam-toggle-btn">EXPLODED CAD [OFF]</button>
+          <button id="viewSolidBtn" class="cam-toggle-btn">SOLID CASING</button>
+          <button id="viewGhostBtn" class="cam-toggle-btn">X-RAY GHOST</button>
+          <button id="camModeBtn" class="cam-toggle-btn">CAMERA: CHASE [TOUCH TO ORBIT]</button>
+        </div>
+      </div>
+      
+      <!-- COMPONENT SELECTOR STRIP -->
+      <div class="component-nav-bar" id="componentNavBar">
+        <button class="comp-nav-btn active" data-comp="all">ALL ASSEMBLED</button>
+        <button class="comp-nav-btn" data-comp="casing">1. CUTAWAY CASING</button>
+        <button class="comp-nav-btn" data-comp="nosecap">2. NOSE CAP</button>
+        <button class="comp-nav-btn" data-comp="gpshob">3. GPS ANTENNA</button>
+        <button class="comp-nav-btn" data-comp="canards">4. CANARDS (4)</button>
+        <button class="comp-nav-btn" data-comp="geu">5. 3-PCB GEU BRAIN</button>
+        <button class="comp-nav-btn" data-comp="geartrain">6. MOTOR &amp; GEAR TRAIN</button>
+        <button class="comp-nav-btn" data-comp="safearm">7. SAFE &amp; ARM</button>
+        <button class="comp-nav-btn" data-comp="booster">8. MOFA BOOSTER</button>
+        <button class="comp-nav-btn" data-comp="threadbase">9. 2" THREAD BASE</button>
+      </div>
+
+      <div id="twinContainer" class="three-panel">
+        <!-- BRIEF HOVER TOOLTIP CARD FOR ACTIVE COMPONENT -->
+        <div id="componentDetailCard" class="component-detail-card hidden">
+          <div class="detail-card-header">
+            <span class="badge-tag" id="compBadge">SYSTEM ARCHITECTURE</span>
+            <span class="comp-phase-tag" id="compPhase">ALL FLIGHT PHASES</span>
+          </div>
+          <h4 id="compTitle">155MM PRECISION GUIDANCE KIT</h4>
+          <p id="compDescription" class="comp-brief-desc">Autonomous bolt-on guidance kit converting standard 155mm unguided shells into precision strike munitions (CEP &lt; 5m) via roll-steering canards.</p>
+          <div class="comp-meta">
+            <span>MATERIAL: <b id="compMaterial">PEEK Radome / 7075-T6 Al / 4340 Steel</b></span>
+            <span>SPEC: <b id="compSpec">MIL-STD-333 / STANAG 4369</b></span>
+          </div>
+        </div>
+
+        <div class="twin-hud-overlay">
+          <span id="hudComponent">TOUCH / DRAG TO ROTATE 3D SHELL · PINCH TO ZOOM</span>
+          <span id="hudStatusTag">155MM ARTICULATED CAD TWIN</span>
+        </div>
+      </div>
+
+      <div class="panel-foot">
+        <span>AFT BODY: 250 HZ SPIN · NOSECONE: DESPUN · 4 CANARDS: ACTIVE STEER</span>
+        <span>SCROLL TO EXPLORE ↓</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 / FLIGHT STATE & BALLISTICS -->
+  <section class="scene scene-state" id="scene2">
+    <div class="section-number">02</div>
+    <p class="eyebrow">STANAG 4355 BALLISTIC TRAJECTORY</p>
+    <h2>SUPERSONIC FLIGHT.<br>CONTINUOUS <em>STATE.</em></h2>
+
+    <div class="state-layout">
+      <div class="altitude-readout">
+        <span>APOGEE / ALTITUDE</span>
+        <strong id="altitude">0</strong><small>m</small>
+        <div class="sub-altitude">
+          <span>MAX APOGEE: <b id="maxApogee">9,420 m</b></span>
+        </div>
+      </div>
+
+      <div class="chart-block">
+        <div class="chart-title">ALTITUDE PROFILE (RK4 NUMERICAL INTEGRATION)</div>
+        <canvas id="altitudeGraph"></canvas>
+      </div>
+
+      <div class="metric-stack">
+        <div>
+          <span>VELOCITY / MACH</span>
+          <div><strong id="velocity">827</strong><small>m/s</small> &nbsp;(<span id="machNumber">M 2.43</span>)</div>
+        </div>
+        <div>
+          <span>ACCELERATION</span>
+          <strong id="acceleration">0.0</strong><small>m/s²</small>
+        </div>
+        <div>
+          <span>DYNAMIC PRESSURE (q)</span>
+          <strong id="dynPressure">0.0</strong><small>kPa</small>
+        </div>
+        <div>
+          <span>CANARD NORMAL FORCE</span>
+          <strong id="canardForce">0.0</strong><small>N</small>
+        </div>
+        <div>
+          <span>TIME OF FLIGHT</span>
+          <strong id="flightTime">0.0</strong><small>s</small>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 / NAVIGATION & CEP ACCURACY -->
+  <section class="scene scene-navigation" id="scene3">
+    <div class="section-number">03</div>
+
+    <div class="nav-copy">
+      <p class="eyebrow">NAVIGATION / PINN ZERO-EFFORT-MISS (ZEM)</p>
+      <h2>PRECISION STRIKE<br>VS BALLISTIC DRIFT.</h2>
+      <p class="nav-description">Despun canards dynamically eliminate lateral Coriolis force and wind drift. Active guidance steers the impact within &lt; 5 meters of target.</p>
+      
+      <div class="cep-card">
+        <div class="cep-header">
+          <span>CIRCULAR ERROR PROBABLE (CEP)</span>
+          <strong id="cepResult" class="highlight-accent">CEP &lt; 3.2 m (GOAL &lt; 30 m)</strong>
+        </div>
+        <div class="cep-metrics">
+          <div><span>DOWNRANGE MISS:</span> <b id="missDownrange">1.8 m</b></div>
+          <div><span>CROSSRANGE MISS:</span> <b id="missCrossrange">2.6 m</b></div>
+          <div><span>PINN LATENCY:</span> <b>0.08 ms</b></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="navigation-panel">
+      <div id="navigation3D"></div>
+      <div class="nav-overlay">
+        <div><span class="legend-line reference-line"></span>GUIDED REFERENCE (CEP &lt; 5m)</div>
+        <div><span class="legend-line estimate-line"></span>ESTIMATED TRACK (ESKF)</div>
+        <div><span class="legend-line unguided-line"></span>UNGUIDED DRIFT (CEP ~180m)</div>
+        <div class="nav-state">LIVE COORDINATE <strong id="nav3DPosition">00000 / 00000 / 00000</strong></div>
+      </div>
+    </div>
+
+    <div class="axis-readouts">
+      <div><span>DOWNRANGE (X)</span><strong id="posX">0.00</strong><small>m</small></div>
+      <div><span>CROSSRANGE (Y)</span><strong id="posY">0.00</strong><small>m</small></div>
+      <div><span>ALTITUDE (Z)</span><strong id="posZ">0.00</strong><small>m</small></div>
+      <div><span>ESTIMATION ERROR</span><strong id="error">0.00</strong><small>m</small></div>
+    </div>
+  </section>
+
+  <!-- 04 / SENSOR FUSION & TINYML DIAGNOSTICS -->
+  <section class="scene scene-sensors" id="scene4">
+    <div class="section-number">04</div>
+    <p class="eyebrow">8-MEMS SENSOR FUSION &amp; TINYML HEALTH MONITOR</p>
+    <h2>MEASURE.<br>ADAPT.<br><em>DIAGNOSE.</em></h2>
+
+    <div class="sensor-grid">
+      <!-- 01 ACCELEROMETER -->
+      <article class="sensor-card">
+        <header>
+          <span>01</span>
+          <strong>8-MEMS ACCELEROMETER</strong>
+          <small>m/s²</small>
+        </header>
+        <canvas id="accelGraph"></canvas>
+        <div class="sensor-value" id="accelValue">0.00</div>
+        <div class="sensor-footer">Axial Setback Shock + Centrifugal Radial</div>
+      </article>
+
+      <!-- 02 GYROSCOPE -->
+      <article class="sensor-card">
+        <header>
+          <span>02</span>
+          <strong>SPIN RATE GYRO (RADIAL)</strong>
+          <small>Hz / RPM</small>
+        </header>
+        <canvas id="gyroGraph"></canvas>
+        <div class="sensor-value" id="gyroValue">250.0 Hz</div>
+        <div class="sensor-footer">Shell Spin: 15,000 RPM · Nose: Despun 0 Hz</div>
+      </article>
+
+      <!-- 03 POSITION / RANGE -->
+      <article class="sensor-card">
+        <header>
+          <span>03</span>
+          <strong>DOWNRANGE POSITION</strong>
+          <small>m</small>
+        </header>
+        <canvas id="positionGraph"></canvas>
+        <div class="sensor-value" id="positionValue">0.0</div>
+        <div class="sensor-footer">NavIC L1/L5 GNSS + ESKF Dead-Reckoning</div>
+      </article>
+
+      <!-- 04 TINYML HEALTH MONITOR -->
+      <article class="sensor-card tinyml-card">
+        <header>
+          <span class="tinyml-tag">AI/ML</span>
+          <strong>TINYML PROGNOSTICS (15KB)</strong>
+          <small id="tinymlBadge" class="badge-nominal">NOMINAL</small>
+        </header>
+        <div class="tinyml-body">
+          <div class="health-bar-container">
+            <div class="health-bar-labels">
+              <span>HARDWARE HEALTH INDEX (H_k)</span>
+              <strong id="healthScore">0.98</strong>
+            </div>
+            <div class="health-bar"><div id="healthBarFill" class="health-fill" style="width: 98%;"></div></div>
+          </div>
+          <div class="tinyml-metrics">
+            <div><span>SPECTRAL JITTER:</span> <strong id="vibeJitter">0.12 g_rms</strong></div>
+            <div><span>SOLDER FATIGUE:</span> <strong id="solderState">INSPECT: OK</strong></div>
+            <div><span>KALMAN R_k GAIN:</span> <strong id="kalmanGain">&times; 1.0 (NOMINAL)</strong></div>
+          </div>
+        </div>
+        <div class="sensor-footer">Autoencoder predicts bus fatigue ~35ms before disconnect</div>
+      </article>
+    </div>
+
+    <p class="section-note">Synthetic 8-MEMS array cancels common-mode launch noise by 1/√8. Real-time TinyML model detects solder joint micro-fissures.</p>
+  </section>
+
+  <!-- 05 / SYSTEM TRACE & FUZE SAFETY -->
+  <section class="scene scene-trace" id="scene5">
+    <div class="section-number">05</div>
+    <div class="trace-heading">
+      <p class="eyebrow">MIL-STD-1316E SAFETY &amp; FUZE TIMELINE</p>
+      <h2>EVERY EPOCH<br>CONFIRMS <em>SAFETY.</em></h2>
+    </div>
+
+    <div class="trace-layout">
+      <div class="trace-summary">
+        <span>SIMULATION STATUS</span>
+        <strong id="finalSummaryStatus">READY</strong>
+        <p id="finalSummaryText">Trajectory, guidance commands, and fuze arming states derive synchronously from the integrated NATO STANAG 4355 6-DOF numerical solver.</p>
+
+        <div class="fuze-mode-banner">
+          <span>ACTIVE FUZE MODE</span>
+          <strong id="activeFuzeDisplay">PROXIMITY (HOB 7M)</strong>
+          <small>Dual mechanical + electronic setback interlocks</small>
+        </div>
+      </div>
+
+      <div class="timeline" id="missionTimeline">
+        <div class="timeline-row active" id="tlSetback">
+          <time>00.0 s</time>
+          <span>SETBACK SHOCK (&gt;10,000 g)</span>
+          <b id="tlSetbackStatus">ARMED</b>
+        </div>
+        <div class="timeline-row" id="tlSpin">
+          <time>01.5 s</time>
+          <span>CENTRIFUGAL SPIN (&gt;150 Hz)</span>
+          <b id="tlSpinStatus">ARMED</b>
+        </div>
+        <div class="timeline-row" id="tlSafeDist">
+          <time>04.0 s</time>
+          <span>OUT-OF-BARREL SAFE SEPARATION (&gt;500m)</span>
+          <b id="tlSafeDistStatus">PASSED</b>
+        </div>
+        <div class="timeline-row" id="tlApogee">
+          <time>32.0 s</time>
+          <span>APOGEE: CANARDS DEPLOY (ROLL STEER)</span>
+          <b id="tlApogeeStatus">STANDBY</b>
+        </div>
+        <div class="timeline-row" id="tlTerminal">
+          <time>58.0 s</time>
+          <span>TERMINAL FMCW RADAR HOB SENSING</span>
+          <b id="tlTerminalStatus">STANDBY</b>
+        </div>
+        <div class="timeline-row" id="tlImpact">
+          <time>64.2 s</time>
+          <span>HEIGHT-OF-BURST DETONATION (7M AGL)</span>
+          <b id="tlImpactStatus">STANDBY</b>
+        </div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+      <span>155MM PRECISION GUIDANCE KIT · SMART INDIA HACKATHON 2024 (SIH26098)</span>
+      <span>YANTRA INDIA LIMITED (YIL) · TACTICAL DIGITAL TWIN</span>
+    </footer>
+  </section>
+
+</main>
+
+<!-- MODAL: PASTE CUSTOM TELEMETRY DATA -->
+<div id="pasteModal" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title">
+        <span class="badge-tag">INGEST CUSTOM TELEMETRY</span>
+        <h4>PASTE OR LOAD TRAJECTORY DATA (JSON / CSV)</h4>
+      </div>
+      <button id="closePasteModalBtn" class="drawer-close">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p class="modal-instruction">Paste custom flight data below. Accepts JSON array of state objects <code>[ { "t": 0, "x": 0, "y": 0, "z": 0, "vx": 827 ... } ]</code> or CSV with header columns <code>t,x,y,z,vx,vy,vz</code>.</p>
+      <textarea id="customDataInput" class="tactical-textarea" rows="9" placeholder='[
+  { "t": 0.0, "x": 0, "y": 0, "z": 0, "vx": 584.8, "vy": 0, "vz": 584.8 },
+  { "t": 1.0, "x": 570, "y": 2, "z": 560, "vx": 560.1, "vy": 1.2, "vz": 540.2 },
+  { "t": 2.0, "x": 1120, "y": 5, "z": 1090, "vx": 542.3, "vy": 2.1, "vz": 502.4 }
+]'></textarea>
+      <div class="modal-tools">
+        <button id="loadSampleDataBtn" class="outline-btn">LOAD PRE-RECORDED BENCHMARK (DAY 7 VALIDATION)</button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button id="cancelPasteBtn" class="ghost-btn">CANCEL</button>
+      <button id="submitCustomDataBtn" class="primary-btn">PARSE &amp; INGEST TRAJECTORY</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    });
+  }
+</script>
+<script type="module" src="dashboard.js"></script>
+</body>
+</html>

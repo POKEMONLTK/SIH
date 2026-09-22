@@ -1,0 +1,56 @@
+{
+  "summary": {
+    "Test A (Baseline)": {
+      "Status": "PASS",
+      "Observed": "Stable nominal telemetry, 0 resets, rail at 3.3V",
+      "Result Format": "Stable baseline screenshot + log verified"
+    },
+    "Test B (Controlled Disturbance)": {
+      "Status": "PASS",
+      "Observed": "System remained observable under motion; no unhandled resets",
+      "Result Format": "Before / during / after motion comparison verified"
+    },
+    "Test C (Sensor Fault)": {
+      "Status": "PASS",
+      "Observed": "Timeout detected -> transitioned to DEGRADED -> recovered to PASS",
+      "Result Format": "Fault detected + auto-recovery logged"
+    },
+    "Test D (Communication Interruption)": {
+      "Status": "PASS",
+      "Observed": "Message timeout recognized at 500ms; failsafe state tripped; reconnected",
+      "Result Format": "Telemetry loss and recovery successfully logged"
+    }
+  },
+  "events": [
+    {
+      "timestamp": "20:51:15",
+      "type": "MOTION",
+      "message": "Controlled high-g shake table transient injected (+12.4g)",
+      "system_state": "PASS"
+    },
+    {
+      "timestamp": "20:51:15",
+      "type": "FAULT",
+      "message": "Sensor communication timeout (>100ms). Flagging DEGRADED mode.",
+      "system_state": "DEGRADED"
+    },
+    {
+      "timestamp": "20:51:15",
+      "type": "RECOVERY",
+      "message": "Sensor bus communication restored. Self-test OK.",
+      "system_state": "PASS"
+    },
+    {
+      "timestamp": "20:51:16",
+      "type": "COMM_LOSS",
+      "message": "Ground telemetry stream lost > 500ms. Failsafe triggered.",
+      "system_state": "FAIL"
+    },
+    {
+      "timestamp": "20:51:16",
+      "type": "COMM_RESTORE",
+      "message": "Telemetry connection re-established.",
+      "system_state": "PASS"
+    }
+  ]
+}

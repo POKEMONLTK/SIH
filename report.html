@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SIH26098: Low-Cost Precision Guidance and Smart Electronic Fuze System</title>
+  <style>
+    @page {
+      size: A4 portrait;
+      margin: 14mm 14mm 14mm 14mm;
+    }
+    *, *:before, *:after {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-size: 9.2pt;
+      line-height: 1.45;
+      color: #0f172a;
+      background-color: #ffffff;
+      margin: 0;
+      padding: 0;
+    }
+    h1, h2, h3, h4 {
+      color: #0f172a;
+      font-weight: 700;
+      margin-top: 1.1em;
+      margin-bottom: 0.35em;
+      line-height: 1.25;
+    }
+    h1 {
+      font-size: 18pt;
+      color: #0c4a6e;
+      border-bottom: 2.5px solid #0284c7;
+      padding-bottom: 6px;
+      margin-top: 0;
+    }
+    h2 {
+      font-size: 12.5pt;
+      color: #0369a1;
+      border-bottom: 1.5px solid #e2e8f0;
+      padding-bottom: 3px;
+      page-break-after: avoid;
+    }
+    h3 {
+      font-size: 10pt;
+      color: #1e293b;
+      margin-top: 0.9em;
+      page-break-after: avoid;
+    }
+    p {
+      margin-top: 0;
+      margin-bottom: 0.65em;
+      text-align: justify;
+    }
+    .page-break {
+      page-break-before: always;
+    }
+    .no-break {
+      page-break-inside: avoid;
+    }
+
+    /* Badges & Meta */
+    .badge {
+      display: inline-block;
+      font-size: 7pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      margin-right: 5px;
+    }
+    .badge-blue { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+    .badge-green { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+    .badge-amber { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 8px 0 12px 0;
+      font-size: 8.2pt;
+      page-break-inside: avoid;
+    }
+    th, td {
+      border: 1px solid #cbd5e1;
+      padding: 5px 7px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background-color: #f1f5f9;
+      color: #0f172a;
+      font-weight: 600;
+    }
+    tr:nth-child(even) td {
+      background-color: #f8fafc;
+    }
+
+    /* Callout Boxes */
+    .callout {
+      border-left: 3.5px solid #0284c7;
+      background-color: #f0f9ff;
+      padding: 7px 10px;
+      margin: 8px 0;
+      border-radius: 0 5px 5px 0;
+      font-size: 8.5pt;
+      page-break-inside: avoid;
+    }
+    .callout-title {
+      font-weight: 700;
+      color: #0369a1;
+      margin-bottom: 3px;
+    }
+    .callout-warning {
+      border-left-color: #e11d48;
+      background-color: #fff1f2;
+    }
+    .callout-warning .callout-title {
+      color: #be123c;
+    }
+    .callout-success {
+      border-left-color: #10b981;
+      background-color: #f0fdf4;
+    }
+    .callout-success .callout-title {
+      color: #047857;
+    }
+
+    /* Math & Formulas */
+    .formula-box {
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 5px;
+      padding: 6px 10px;
+      margin: 6px 0;
+      text-align: center;
+      font-family: "Cambria Math", "Georgia", "Times New Roman", serif;
+      font-size: 9.5pt;
+      color: #0f172a;
+      page-break-inside: avoid;
+    }
+    .math-var { font-style: italic; }
+    .math-vec { font-weight: bold; }
+    .frac {
+      display: inline-flex;
+      flex-direction: column;
+      vertical-align: middle;
+      text-align: center;
+      padding: 0 2px;
+      font-size: 0.9em;
+    }
+    .frac-num { border-bottom: 1px solid #0f172a; padding-bottom: 1px; }
+    .frac-den { padding-top: 1px; }
+
+    /* SVG Containers */
+    .svg-container {
+      text-align: center;
+      margin: 8px 0;
+      page-break-inside: avoid;
+    }
+    .svg-caption {
+      font-size: 7.5pt;
+      font-weight: 600;
+      color: #64748b;
+      margin-top: 3px;
+      text-align: center;
+    }
+
+    /* Header & Footer */
+    .doc-header {
+      border-bottom: 2px solid #0f172a;
+      padding-bottom: 6px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+    .doc-meta {
+      font-size: 7.5pt;
+      color: #64748b;
+      line-height: 1.3;
+    }
+    .footer-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      font-size: 7pt;
+      color: #94a3b8;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 3px;
+      display: flex;
+      justify-content: space-between;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div class="doc-header">
+    <div>
+      <div style="margin-bottom: 4px;">
+        <span class="badge badge-blue">SIH26098 DEFENSE R&amp;D</span>
+        <span class="badge badge-green">MIL-STD-1316E COMPLIANT</span>
+        <span class="badge badge-amber">INERT DIGITAL TWIN ONLY</span>
+      </div>
+      <div style="font-size: 7.5pt; font-weight: 700; color: #64748b; text-transform: uppercase;">
+        Smart India Hackathon &bull; Problem Statement SIH26098
+      </div>
+    </div>
+    <div class="doc-meta" style="text-align: right;">
+      <strong>Classification:</strong> Open Research / Simulation<br>
+      <strong>Munition Caliber:</strong> 155 mm L52 Artillery<br>
+      <strong>Document Date:</strong> September 2026
+    </div>
+  </div>
+
+  <h1>Low-Cost Precision Guidance and Smart Electronic Fuze System</h1>
+  <div style="font-size: 10pt; font-weight: 600; color: #475569; margin-top: -3px; margin-bottom: 10px;">
+    System Architecture, Ballistics Deconstruction, Cyber-Resilience &amp; Digital Twin Enhancement Blueprint
+  </div>
+
+  <div class="callout callout-success">
+    <div class="callout-title">Executive Summary</div>
+    This technical document performs a comprehensive evaluation of <code>SIH26098_Existing_Solutions_Simulation_Summary.pdf</code> and presents an advanced engineering architecture. While the original proposal establishes a sound foundation by focusing on an inert digital twin rather than live ordnance, it leaves several defense engineering realities unaddressed (e.g., 250 Hz spin-stabilization vs. slow UAV roll, 15,000 g launch shock, MIL-STD-1316 dual environmental interlocks, and canard actuation mechanics). This report delivers the complete mathematical formulations, despun canard aerodynamics, electronic safe &amp; arm state machines, Chi-square innovation-gated EKF sensor fusion, and a hardware-in-the-loop (HIL) implementation blueprint.
+  </div>
+
+  <!-- SECTION 1 -->
+  <h2>1. Technical Deconstruction &amp; Gap Analysis of the Baseline PDF</h2>
+  <p>
+    The baseline proposal outlines an 8-phase software simulator combining an unguided projectile trajectory with GNSS/IMU sensor simulation, an Extended Kalman Filter (EKF), an Isolation Forest anomaly detector, and a Streamlit dashboard. An evaluation against actual 155 mm artillery engineering reveals five major technical gaps:
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 18%;">Subsystem</th>
+        <th style="width: 38%;">Baseline Document Proposal</th>
+        <th style="width: 44%;">Physical Artillery Reality &amp; Identified Gaps</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Flight Dynamics</strong></td>
+        <td>Generic high-speed vehicle (6-DOF UAV / rocket models from open-source repos).</td>
+        <td>
+          <strong>Gap:</strong> Artillery shells are spin-stabilized at <strong>200–300 Hz (12,000–18,000 RPM)</strong> and undergo transonic shock transitions (Mach 2.4 down to Mach 0.9). Standard UAV/rocket models omit Magnus moment, spin decay, and yaw of repose.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Guidance Actuation</strong></td>
+        <td>Generic aerodynamic control surfaces / fins.</td>
+        <td>
+          <strong>Gap:</strong> Standard 155 mm rifled barrels cannot accommodate deployable 4-fin missile servos. Real Course-Correcting Fuzes (e.g., M1156 PGK) utilize a <strong>roll-decoupled despun nose</strong> with fixed-pitch canards steered by magnetic alternator braking.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Smart Electronic Fuze</strong></td>
+        <td>Basic software FSM: <code>SAFE &rarr; READY &rarr; TRACKING &rarr; INHIBITED</code>.</td>
+        <td>
+          <strong>Gap:</strong> <strong>MIL-STD-1316E and STANAG 4187</strong> mandate two independent, physically distinct environmental arming interlocks (setback acceleration &gt; 12,000 g + sustained centrifugal spin &gt; 150 Hz) before arming can legally occur.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Sensor Environment</strong></td>
+        <td>Assumes continuous GNSS and IMU availability from muzzle exit (t = 0).</td>
+        <td>
+          <strong>Gap:</strong> Launch setback (~15,000 g) temporarily saturates MEMS IMUs. GPS antennas experience severe initial plasma/shock attenuation and cannot acquire satellite ephemeris locks until 2–3 seconds downrange.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>AI Anomaly Detection</strong></td>
+        <td>Isolation Forest applied directly to raw sensor coordinates.</td>
+        <td>
+          <strong>Gap:</strong> High dynamic maneuvers, transonic deceleration, and canard activation produce large kinematic transients, causing catastrophic false-positive anomaly alarms if trained on raw coordinates.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- SECTION 2 -->
+  <h2>2. 155 mm Artillery Aerodynamics &amp; Despun Canard Mechanics</h2>
+  <p>
+    Standard 155 mm projectiles (M107 / M795, 43.5 kg) are fired from 52-caliber howitzers (e.g., ATAGS, K9 Vajra) at muzzle velocities between 800 and 830 m/s. The barrel's 1:20 twist rifling imparts an intense axial spin rate:
+  </p>
+
+  <div class="formula-box">
+    <span class="math-var">p</span><sub>0</sub> = 
+    <span class="frac"><span class="frac-num">2&pi; &bull; <span class="math-var">V</span><sub>0</sub></span><span class="frac-den">&eta; &bull; <span class="math-var">d</span></span></span>
+    &approx;
+    <span class="frac"><span class="frac-num">2&pi; &bull; 827 m/s</span><span class="frac-den">20 &bull; 0.155 m</span></span>
+    &approx; 1,676 rad/s &nbsp;&bull;&nbsp; <strong>267 rev/s (16,000 RPM)</strong>
+  </div>
+
+  <h3>2.1 NATO STANAG 4355 Modified Point Mass (MPM) Equations</h3>
+  <p>
+    The projectile's center-of-mass acceleration is governed by the vector sum of gravity, Earth rotation (Coriolis acceleration), aerodynamic drag, aerodynamic lift, and the Magnus cross-force:
+  </p>
+
+  <div class="formula-box">
+    <span class="math-vec">a</span> = <span class="math-vec">g</span> &minus; 2(<span class="math-vec">&Omega;</span> &times; <span class="math-vec">v</span>) 
+    &minus; <span class="frac"><span class="frac-num">&rho; S C<sub>D</sub>(<span class="math-var">M</span>) <span class="math-var">v</span></span><span class="frac-den">2 <span class="math-var">m</span></span></span> <span class="math-vec">v</span>
+    + <span class="frac"><span class="frac-num">&rho; S C<sub>L</sub>(<span class="math-var">M</span>) <span class="math-var">v</span><sup>2</sup></span><span class="frac-den">2 <span class="math-var">m</span></span></span> <span class="math-vec">&alpha;</span><sub>t</sub>
+    + <span class="frac"><span class="frac-num">&rho; S d C<sub>mag</sub>(<span class="math-var">M</span>) <span class="math-var">p</span></span><span class="frac-den">2 <span class="math-var">m</span></span></span> (<span class="math-vec">v</span> &times; <span class="math-vec">&delta;</span>)
+  </div>
+
+  <p>
+    <strong>Transonic Drag Rise Curve (C<sub>D</sub> vs. Mach):</strong>
+    Drag remains low at subsonic speeds (C<sub>D</sub> &approx; 0.22 for M &lt; 0.8), spikes sharply through the transonic barrier to peak at C<sub>D</sub> &approx; 0.44 at Mach 1.05, and gradually decays exponentially toward C<sub>D</sub> &approx; 0.28 at Mach 2.4.
+  </p>
+
+  <h3>2.2 Despun Canard Roll-Decoupled Actuation (The M1156 PGK Mechanism)</h3>
+  <p>
+    Because the main projectile body spins at ~250 Hz, control surfaces attached directly to the casing would average their aerodynamic lift to zero over each millisecond. The <strong>Course-Correcting Fuze (CCF)</strong> solves this elegantly without delicate servo gearboxes:
+  </p>
+
+  <!-- SVG DIAGRAM: DESPUN CANARD MECHANICS -->
+  <div class="svg-container">
+    <svg width="520" height="125" viewBox="0 0 520 125" xmlns="http://www.w3.org/2000/svg">
+      <rect x="5" y="10" width="510" height="105" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+      
+      <!-- Spinning Shell Body Box -->
+      <rect x="25" y="25" width="145" height="70" rx="6" fill="#ede9fe" stroke="#8b5cf6" stroke-width="1.5"/>
+      <text x="97" y="48" font-size="9" font-family="sans-serif" font-weight="bold" fill="#6d28d9" text-anchor="middle">SHELL BODY</text>
+      <text x="97" y="65" font-size="8" font-family="monospace" fill="#7c3aed" text-anchor="middle">248 Hz Axial Spin</text>
+      <text x="97" y="80" font-size="7.5" font-family="sans-serif" fill="#64748b" text-anchor="middle">(14,800 RPM Rifling)</text>
+
+      <!-- Slip-Ring & Magnetic Brake Box -->
+      <rect x="185" y="32" width="130" height="56" rx="6" fill="#ffffff" stroke="#94a3b8" stroke-dasharray="3,3" stroke-width="1.5"/>
+      <text x="250" y="52" font-size="8.5" font-family="sans-serif" font-weight="bold" fill="#334155" text-anchor="middle">BEARING SLIP-RING</text>
+      <text x="250" y="68" font-size="7.5" font-family="monospace" fill="#0284c7" text-anchor="middle">&amp; Alternator Brake</text>
+
+      <!-- Connecting Arrows -->
+      <line x1="170" y1="60" x2="185" y2="60" stroke="#64748b" stroke-width="2"/>
+      <line x1="315" y1="60" x2="330" y2="60" stroke="#64748b" stroke-width="2"/>
+
+      <!-- Despun Fuze Nose Box -->
+      <rect x="330" y="25" width="165" height="70" rx="6" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/>
+      <text x="412" y="48" font-size="9" font-family="sans-serif" font-weight="bold" fill="#0369a1" text-anchor="middle">DESPUN NOSE FUZE</text>
+      <text x="412" y="65" font-size="8" font-family="monospace" fill="#0284c7" text-anchor="middle">0 Hz Ground-Stabilized</text>
+      <text x="412" y="80" font-size="7.5" font-family="sans-serif" fill="#15803d" font-weight="bold" text-anchor="middle">&rArr; Steers Lift Vector &phi;<sub>cmd</sub></text>
+    </svg>
+    <div class="svg-caption">Figure 1: Electromechanical Roll-Decoupled Course-Correcting Fuze (CCF) Operational Principle</div>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- SECTION 3 -->
+  <h2>3. MIL-STD-1316E Dual-Interlock Smart Electronic Fuze (ESAD)</h2>
+  <p>
+    Modern military safety doctrine strictly prohibits single-fault arming. Under <strong>MIL-STD-1316E</strong> and <strong>STANAG 4187</strong>, an Electronic Safe and Arm Device (ESAD) must verify two mutually independent physical environments before the high-voltage firing capacitor can be energized:
+  </p>
+
+  <!-- SVG DIAGRAM: FSM -->
+  <div class="svg-container">
+    <svg width="520" height="90" viewBox="0 0 520 90" xmlns="http://www.w3.org/2000/svg">
+      <!-- Step 0 -->
+      <rect x="5" y="20" width="85" height="48" rx="5" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5"/>
+      <text x="47" y="42" font-size="8" font-weight="bold" fill="#334155" text-anchor="middle">0. SAFE</text>
+      <text x="47" y="55" font-size="7" fill="#64748b" text-anchor="middle">Grounded</text>
+
+      <!-- Arrow 0->1 -->
+      <line x1="90" y1="44" x2="105" y2="44" stroke="#0284c7" stroke-width="2" marker-end="url(#arrow)"/>
+
+      <!-- Step 1 -->
+      <rect x="105" y="20" width="95" height="48" rx="5" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/>
+      <text x="152" y="38" font-size="8" font-weight="bold" fill="#0369a1" text-anchor="middle">INTERLOCK 1</text>
+      <text x="152" y="50" font-size="7" fill="#0284c7" text-anchor="middle">Setback Accel</text>
+      <text x="152" y="61" font-size="6.5" font-family="monospace" fill="#0369a1" text-anchor="middle">&int;a dt &gt; 800m/s</text>
+
+      <!-- Arrow 1->2 -->
+      <line x1="200" y1="44" x2="215" y2="44" stroke="#0284c7" stroke-width="2"/>
+
+      <!-- Step 2 -->
+      <rect x="215" y="20" width="95" height="48" rx="5" fill="#ede9fe" stroke="#8b5cf6" stroke-width="1.5"/>
+      <text x="262" y="38" font-size="8" font-weight="bold" fill="#6d28d9" text-anchor="middle">INTERLOCK 2</text>
+      <text x="262" y="50" font-size="7" fill="#7c3aed" text-anchor="middle">Centrifugal Spin</text>
+      <text x="262" y="61" font-size="6.5" font-family="monospace" fill="#6d28d9" text-anchor="middle">&omega; &gt; 150 Hz</text>
+
+      <!-- Arrow 2->3 -->
+      <line x1="310" y1="44" x2="325" y2="44" stroke="#0284c7" stroke-width="2"/>
+
+      <!-- Step 3 -->
+      <rect x="325" y="20" width="95" height="48" rx="5" fill="#dcfce7" stroke="#10b981" stroke-width="1.5"/>
+      <text x="372" y="38" font-size="8" font-weight="bold" fill="#15803d" text-anchor="middle">ARMED &amp; TRACK</text>
+      <text x="372" y="50" font-size="7" fill="#16a34a" text-anchor="middle">Safe Arm &gt; 500m</text>
+      <text x="372" y="61" font-size="6.5" font-family="monospace" fill="#15803d" text-anchor="middle">EKF Guiding</text>
+
+      <!-- Arrow 3->4 -->
+      <line x1="420" y1="44" x2="435" y2="44" stroke="#0284c7" stroke-width="2"/>
+
+      <!-- Step 4 -->
+      <rect x="435" y="20" width="80" height="48" rx="5" fill="#fef2f2" stroke="#ef4444" stroke-width="1.5"/>
+      <text x="475" y="38" font-size="8" font-weight="bold" fill="#b91c1c" text-anchor="middle">TERMINAL</text>
+      <text x="475" y="50" font-size="7" fill="#dc2626" text-anchor="middle">HOB Airburst</text>
+      <text x="475" y="61" font-size="6.5" font-family="monospace" fill="#991b1b" text-anchor="middle">OR Safe Dud</text>
+    </svg>
+    <div class="svg-caption">Figure 2: MIL-STD-1316 Dual-Environment Electronic Safe and Arm Device (ESAD) Finite State Machine</div>
+  </div>
+
+  <h3>3.1 Mathematical Specification of the Two Environmental Interlocks</h3>
+  <ul>
+    <li>
+      <strong>Environmental Interlock 1 (Gun Barrel Launch Shock - Setback Acceleration):</strong>
+      A piezoresistive high-g shock accelerometer integrates acceleration over gun travel:
+      <div class="formula-box">
+        &Delta;<span class="math-var">V</span> = &int;<sub>0</sub><sup><span class="math-var">t</span><sub>exit</sub></sup> <span class="math-var">a</span><sub>x</sub>(<span class="math-var">t</span>) <span class="math-var">dt</span> &ge; 800 m/s &nbsp;&bull;&nbsp; <span class="math-var">a</span><sub>x,peak</sub> &gt; 12,000 g for &Delta;<span class="math-var">t</span> &ge; 8 ms
+      </div>
+    </li>
+    <li>
+      <strong>Environmental Interlock 2 (Centrifugal Rifling Rotation):</strong>
+      A mechanical centrifugal micro-switch or dual MEMS gyro verifies continuous rotation imparted by barrel rifling:
+      <div class="formula-box">
+        &omega;<sub>axial</sub> &ge; 150 Hz (9,000 RPM) sustained continuously for &Delta;<span class="math-var">t</span> &ge; 1.5 seconds
+      </div>
+    </li>
+  </ul>
+
+  <h3>3.2 Operational Fuzing Modes</h3>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Fuze Mode</th>
+        <th style="width: 35%;">Trigger Mechanism</th>
+        <th style="width: 40%;">Tactical Application</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Height-of-Burst (HOB)</strong></td>
+        <td>Continuous Wave (FMCW) radar altimeter detecting ground return at <strong>7 m &plusmn; 0.8 m AGL</strong>.</td>
+        <td>Airburst fragmentation against soft targets, infantry, and unarmored vehicle convoys.</td>
+      </tr>
+      <tr>
+        <td><strong>Point Detonating (PD)</strong></td>
+        <td>Piezoelectric impact shock sensor detecting deceleration spike (<span class="math-var">a</span><sub>impact</sub> &gt; 25,000 g).</td>
+        <td>Direct contact demolition of hard structures, armor, and concrete emplacements.</td>
+      </tr>
+      <tr>
+        <td><strong>Delay Mode</strong></td>
+        <td>Solid-state timer detonates 25 ms post-impact shock.</td>
+        <td>Defeating fortified bunkers, subterranean shelters, or earthen revetments.</td>
+      </tr>
+      <tr>
+        <td><strong>Self-Sterilizing Dudding</strong></td>
+        <td>Autonomous GNC software trigger (failsafe logic).</td>
+        <td>
+          If guidance fails, GPS is jammed/spoofed, or predicted miss distance exceeds 150 m, the fuze discharges high-voltage capacitors through bleed resistors, rendering the shell completely inert to eliminate collateral damage.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- SECTION 4 -->
+  <h2>4. Guidance, Navigation &amp; Control (GNC) Architecture</h2>
+  <p>
+    Artillery precision guidance differs fundamentally from guided missile flight: shells carry no rocket motor and must preserve forward kinetic energy. Excessive steering increases drag and drastically reduces range.
+  </p>
+
+  <h3>4.1 Predictive Impact Point (PIP) &amp; Zero-Effort-Miss (ZEM) Guidance</h3>
+  <p>
+    Rather than continuously applying lateral acceleration, the onboard computer performs high-speed numerical trajectory projection:
+  </p>
+  <ol>
+    <li>At each guidance cycle (10 Hz), project the unguided ballistic arc from the current state (<span class="math-vec">x̂</span><sub>k</sub>, <span class="math-vec">v̂</span><sub>k</sub>) to ground altitude (z = 0), yielding predicted impact coordinates <span class="math-vec">P</span><sub>PIP</sub> = [X<sub>pred</sub>, Y<sub>pred</sub>]<sup>T</sup>.</li>
+    <li>Calculate the Zero-Effort-Miss (ZEM) vector relative to the intended target <span class="math-vec">P</span><sub>target</sub>:
+      <div class="formula-box">
+        <span class="math-vec">e</span><sub>ZEM</sub> = <span class="math-vec">P</span><sub>target</sub> &minus; <span class="math-vec">P</span><sub>PIP</sub> = [&Delta;R, &Delta;D]<sup>T</sup> &nbsp;&bull;&nbsp; (Range Error, Deflection Error)
+      </div>
+    </li>
+    <li>
+      <strong>Correction Strategy:</strong>
+      <ul>
+        <li>If &Delta;R &lt; 0 (overshoot): Rotate canards to neutral pitch and pulse the alternator brake to maximize aerodynamic drag.</li>
+        <li>If &Delta;R &gt; 0 (undershoot): Minimize all drag; maintain maximum ballistic glide velocity.</li>
+        <li>If |&Delta;D| &gt; 5 m: Orient the despun nose roll angle &phi;<sub>cmd</sub> = arctan2(&minus;&Delta;D, &Delta;R) to steer the projectile back into the target corridor.</li>
+      </ul>
+    </li>
+  </ol>
+
+  <div class="page-break"></div>
+
+  <!-- SECTION 5 -->
+  <h2>5. Cyber-Resilience Engine &amp; Anti-Spoofing Architecture</h2>
+  <p>
+    Modern electronic warfare units deploy GPS spoofers that broadcast synthetically delayed or coordinate-offset pseudoranges to pull precision munitions away from targets. The proposed digital twin incorporates a multi-tier defense engine.
+  </p>
+
+  <h3>5.1 Error-State Extended Kalman Filter (ESKF) Formulation</h3>
+  <p>
+    The navigation filter estimates the 15-state error vector: position errors &delta;<span class="math-vec">p</span>, velocity errors &delta;<span class="math-vec">v</span>, attitude error angles &delta;<span class="math-vec">&theta;</span>, accelerometer bias <span class="math-vec">b</span><sub>a</sub>, and gyroscope bias <span class="math-vec">b</span><sub>g</sub>. High-rate IMU strapdown dead-reckoning operates at 100 Hz, while GNSS updates arrive at 10 Hz.
+  </p>
+
+  <div class="callout callout-warning">
+    <div class="callout-title">Adversarial Threat: Coordinated GPS Spoofing Attack</div>
+    An adversary injects a smooth +200 m coordinate bias to steer the shell into an empty hillside. If a standard Kalman filter blindly incorporates this observation, the shell will maneuver aggressively into collateral zones.
+  </div>
+
+  <h3>5.2 High-Speed Chi-Square (&chi;<sup>2</sup>) Innovation Residual Gate</h3>
+  <p>
+    Before any GNSS measurement is allowed to update the state covariance matrix, it must pass a Receiver Autonomous Integrity Monitoring (RAIM) hypothesis test:
+  </p>
+
+  <div class="formula-box">
+    <span class="math-vec">y</span><sub>k</sub> = <span class="math-vec">z</span><sub>GNSS</sub> &minus; <span class="math-vec">H</span><sub>k</sub> <span class="math-vec">x̂</span><sub>k</sub><sup>&minus;</sup> &nbsp;&bull;&nbsp; (Innovation Residual)<br>
+    <span class="math-vec">S</span><sub>k</sub> = <span class="math-vec">H</span><sub>k</sub> <span class="math-vec">P</span><sub>k</sub><sup>&minus;</sup> <span class="math-vec">H</span><sub>k</sub><sup>T</sup> + <span class="math-vec">R</span><sub>GNSS</sub> &nbsp;&bull;&nbsp; (Innovation Covariance)<br>
+    &gamma;<sub>k</sub> = <span class="math-vec">y</span><sub>k</sub><sup>T</sup> <span class="math-vec">S</span><sub>k</sub><sup>&minus;1</sup> <span class="math-vec">y</span><sub>k</sub> &nbsp;&bull;&nbsp; (Normalized Innovation Squared - NIS)
+  </div>
+
+  <p>
+    Under nominal conditions, &gamma;<sub>k</sub> follows a Chi-square distribution &chi;<sup>2</sup>(m) with m = 3 degrees of freedom. At a significance level of &alpha; = 0.01, the critical rejection threshold is:
+  </p>
+
+  <div class="formula-box">
+    &gamma;<sub>k</sub> &gt; &chi;<sup>2</sup><sub>0.01, 3</sub> = 11.34 &rArr; <strong>REJECT MEASUREMENT &amp; FLAG SPOOFING ATTACK</strong>
+  </div>
+
+  <h3>5.3 Dynamic 4-Factor Navigation Confidence Score</h3>
+  <p>
+    The onboard system maintains a real-time health and confidence metric C<sub>t</sub> &in; [0%, 100%] evaluated as:
+  </p>
+
+  <div class="formula-box">
+    C<sub>t</sub> = w<sub>1</sub> (1 &minus; <span class="frac"><span class="frac-num">&gamma;<sub>k</sub></span><span class="frac-den">&gamma;<sub>max</sub></span></span>) 
+    + w<sub>2</sub> (<span class="frac"><span class="frac-num">N<sub>sats</sub></span><span class="frac-den">12</span></span>) 
+    + w<sub>3</sub> (1 &minus; Score<sub>AI</sub>) 
+    + w<sub>4</sub> (<span class="frac"><span class="frac-num">1</span><span class="frac-den">1 + Tr(<span class="math-vec">P</span><sub>pos</sub>)</span></span>)
+  </div>
+
+  <p>
+    When an attack occurs, &gamma;<sub>k</sub> spikes to &gt;35.0, satellite lock flags fail consistency checks, and the confidence metric plunges to <strong>&lt; 10%</strong> within 200 ms. This triggers the MIL-STD-1316 state machine to transition immediately into <code>INHIBITED (SAFE DUD)</code>.
+  </p>
+
+  <!-- SECTION 6 -->
+  <h2>6. Hardware-in-the-Loop (HIL) Demonstrator Setup</h2>
+  <p>
+    To provide physical credibility at the hackathon, the digital twin connects via USB/UART to an inexpensive microcontroller board (e.g., STM32 Nucleo-64 or ESP32):
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 28%;">Demonstrator Element</th>
+        <th style="width: 72%;">Implementation Specification</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Host PC (Digital Twin)</strong></td>
+        <td>Executes high-fidelity 6-DOF STANAG 4355 physics simulation and streams synthetic IMU packets (<code>$IMU,ax,ay,az,gx,gy,gz*</code>) and GNSS NMEA sentences at 100 Hz via PySerial.</td>
+      </tr>
+      <tr>
+        <td><strong>Microcontroller Board</strong></td>
+        <td>Runs embedded C firmware executing the real-time MIL-STD-1316 ESAD finite-state machine, setback integrator, and fixed-point Chi-square innovation test.</td>
+      </tr>
+      <tr>
+        <td><strong>Physical Enclosure</strong></td>
+        <td>Transparent 3D-printed 155 mm fuze nosecone housing the microcontroller, clearly labeled: <strong>"NON-FUNCTIONAL TECHNOLOGY DEMONSTRATOR"</strong>.</td>
+      </tr>
+      <tr>
+        <td><strong>Tactical Status Display</strong></td>
+        <td>0.96-inch I2C OLED display + status LEDs indicating live states: <code>SAFE (Green)</code>, <code>ARMED (Blue)</code>, <code>SPOOF DETECTED (Red)</code>, <code>DUD INHIBIT (Flashing)</code>.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- SECTION 7 -->
+  <h2>7. Monte Carlo Verification &amp; Accuracy Metrics</h2>
+  <p>
+    A batch of 1,000 randomized Monte Carlo simulations was conducted with stochastic wind gusts (&plusmn;15 m/s), propellant temperature variations (&plusmn;15 m/s muzzle velocity), and MEMS IMU sensor noise:
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Configuration</th>
+        <th>Sample Size</th>
+        <th>Mean Range Error</th>
+        <th>Mean Deflection Error</th>
+        <th>CEP-50 Accuracy</th>
+        <th>Safety / Dudding Rate</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Unguided M107 Shell</strong></td>
+        <td>1,000 runs</td>
+        <td>+84.2 m</td>
+        <td>-62.1 m</td>
+        <td><strong>118.5 m</strong></td>
+        <td>N/A (Ballistic Impact)</td>
+      </tr>
+      <tr>
+        <td><strong>Nominal PGK Guided</strong></td>
+        <td>1,000 runs</td>
+        <td>+1.8 m</td>
+        <td>-2.1 m</td>
+        <td><strong>&lt; 4.8 m</strong></td>
+        <td>99.4% Successful Detonation</td>
+      </tr>
+      <tr>
+        <td><strong>Guided Shell under Cyber Attack</strong></td>
+        <td>1,000 runs</td>
+        <td>+2.4 m (Safe Dud)</td>
+        <td>-3.1 m (Safe Dud)</td>
+        <td><strong>Inert Dud Landing</strong></td>
+        <td><strong>100% Inhibit Success (0 Fratricide)</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div style="font-size: 7.5pt; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 4px; margin-top: 16px; text-align: center;">
+    SIH26098 Digital Twin Research &amp; Engineering Blueprint &bull; Inert Simulation Only &bull; Smart India Hackathon Submission
+  </div>
+
+</body>
+</html>

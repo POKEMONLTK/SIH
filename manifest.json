@@ -1,0 +1,21 @@
+{
+  "name": "155mm PGK Digital Twin & GNC Simulation",
+  "short_name": "155mm PGK",
+  "description": "Interactive 3D Digital Twin, 6-DOF GNC Flight Simulation & TinyML Diagnostics for 155mm Precision Guidance Kit (SIH26098).",
+  "id": "/155mm-pgk-digital-twin",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#040807",
+  "theme_color": "#92d61b",
+  "orientation": "any",
+  "categories": ["education", "simulation", "engineering"],
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

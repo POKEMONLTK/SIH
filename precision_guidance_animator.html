@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIH26098: 155mm Precision Guidance & Smart Fuze Digital Twin</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    @keyframes spin-cw {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @keyframes pulse-radar {
+      0% { r: 5; opacity: 1; }
+      100% { r: 45; opacity: 0; }
+    }
+    .animate-spin-fast {
+      animation: spin-cw 0.25s linear infinite;
+    }
+    .animate-spin-medium {
+      animation: spin-cw 1.2s linear infinite;
+    }
+    .radar-pulse {
+      animation: pulse-radar 1.5s ease-out infinite;
+    }
+    /* Custom tactical scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.6);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(56, 189, 248, 0.4);
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen p-3 md:p-6 select-none">
+
+  <!-- Header Section -->
+  <div class="max-w-7xl mx-auto space-y-4">
+    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-2xl backdrop-blur flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+      <div class="space-y-1">
+        <div class="flex items-center gap-2">
+          <span class="px-2.5 py-0.5 rounded-full text-xs font-mono font-semibold bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">
+            SIH26098 DIGITAL TWIN
+          </span>
+          <span class="px-2.5 py-0.5 rounded-full text-xs font-mono font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+            MIL-STD-1316E COMPLIANT
+          </span>
+          <span class="px-2.5 py-0.5 rounded-full text-xs font-mono font-semibold bg-amber-500/20 text-amber-400 border border-amber-500/30">
+            INERT SIMULATION ONLY
+          </span>
+        </div>
+        <h1 class="text-xl md:text-2xl font-bold tracking-tight text-white flex items-center gap-2">
+          155 mm Artillery Shell Precision Guidance & Smart Electronic Fuze Simulator
+        </h1>
+        <p class="text-sm text-slate-400">
+          Interactive multi-physics trajectory, despun canard aerodynamic control, EKF sensor fusion, and cyber-resilient fail-safe dudding.
+        </p>
+      </div>
+
+      <!-- Live Global Stats Badges -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full lg:w-auto text-xs font-mono">
+        <div class="bg-slate-950/70 border border-slate-800 rounded-lg p-2 text-center">
+          <div class="text-slate-400">CALIBER</div>
+          <div class="text-sm font-bold text-white">155 mm / L52</div>
+        </div>
+        <div class="bg-slate-950/70 border border-slate-800 rounded-lg p-2 text-center">
+          <div class="text-slate-400">MUZZLE VEL</div>
+          <div class="text-sm font-bold text-cyan-400">827 m/s (M 2.43)</div>
+        </div>
+        <div class="bg-slate-950/70 border border-slate-800 rounded-lg p-2 text-center">
+          <div class="text-slate-400">SPIN RATE</div>
+          <div class="text-sm font-bold text-indigo-400">248 Hz (14.8k RPM)</div>
+        </div>
+        <div class="bg-slate-950/70 border border-slate-800 rounded-lg p-2 text-center">
+          <div class="text-slate-400">EST. RANGE</div>
+          <div class="text-sm font-bold text-emerald-400">18.4 km</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="flex flex-wrap gap-2 border-b border-slate-800 pb-2">
+      <button id="tab-btn-flight" onclick="switchTab('flight')" class="px-4 py-2 rounded-xl text-sm font-medium transition-all bg-cyan-600 text-white shadow-lg shadow-cyan-900/30 flex items-center gap-2">
+        <span>🚀</span> Flight Dynamics & Trajectory Animation
+      </button>
+      <button id="tab-btn-canard" onclick="switchTab('canard')" class="px-4 py-2 rounded-xl text-sm font-medium transition-all bg-slate-900 text-slate-400 hover:text-white hover:bg-slate-800 flex items-center gap-2">
+        <span>🔄</span> Despun Canard Actuation Mechanics
+      </button>
+      <button id="tab-btn-fuze" onclick="switchTab('fuze')" class="px-4 py-2 rounded-xl text-sm font-medium transition-all bg-slate-900 text-slate-400 hover:text-white hover:bg-slate-800 flex items-center gap-2">
+        <span>🛡️</span> MIL-STD-1316 Smart Fuze State Machine
+      </button>
+      <button id="tab-btn-cyber" onclick="switchTab('cyber')" class="px-4 py-2 rounded-xl text-sm font-medium transition-all bg-slate-900 text-slate-400 hover:text-white hover:bg-slate-800 flex items-center gap-2">
+        <span>📡</span> EKF Sensor Fusion & Anti-Spoofing (RAIM)
+      </button>
+    </div>
+
+    <!-- TAB 1: FLIGHT DYNAMICS & TRAJECTORY ANIMATION -->
+    <div id="tab-flight" class="tab-pane space-y-4">
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
+        
+        <!-- Left: Canvas Animation Viewport (3 cols) -->
+        <div class="lg:col-span-3 bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-xl flex flex-col gap-3">
+          
+          <!-- Top Canvas Controls & Scenarios -->
+          <div class="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-slate-800">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-mono uppercase text-slate-400">Scenario:</span>
+              <button onclick="setScenario('guided')" id="scen-guided" class="px-3 py-1 rounded-lg text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/50">
+                🔵 Nominal PGK Guided
+              </button>
+              <button onclick="setScenario('ballistic')" id="scen-ballistic" class="px-3 py-1 rounded-lg text-xs font-semibold bg-slate-800 text-slate-400 border border-slate-700 hover:text-slate-200">
+                ⚪ Unguided Ballistic
+              </button>
+              <button onclick="setScenario('spoofed')" id="scen-spoofed" class="px-3 py-1 rounded-lg text-xs font-semibold bg-slate-800 text-slate-400 border border-slate-700 hover:text-slate-200">
+                🔴 Cyber Spoofing & Auto-Inhibit
+              </button>
+            </div>
+
+            <!-- Play / Pause / Reset & Speed -->
+            <div class="flex items-center gap-2">
+              <button id="btn-play-pause" onclick="togglePlayPause()" class="px-3 py-1 rounded-lg text-xs font-semibold bg-cyan-600 hover:bg-cyan-500 text-white flex items-center gap-1">
+                <span id="play-icon">⏸ Pause</span>
+              </button>
+              <button onclick="resetSimulation()" class="px-3 py-1 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300">
+                🔄 Reset
+              </button>
+              <div class="flex items-center gap-1 bg-slate-950 border border-slate-800 px-2 py-1 rounded-lg text-xs">
+                <span class="text-slate-400">Speed:</span>
+                <select id="sim-speed" onchange="changeSpeed(this.value)" class="bg-transparent text-cyan-400 font-mono focus:outline-none">
+                  <option value="1">1x</option>
+                  <option value="2" selected>2x</option>
+                  <option value="4">4x</option>
+                  <option value="8">8x</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Main Interactive Canvas -->
+          <div class="relative w-full h-[380px] md:h-[460px] bg-slate-950 rounded-xl overflow-hidden border border-slate-800/80 shadow-inner">
+            <canvas id="trajectoryCanvas" class="w-full h-full block"></canvas>
+            
+            <!-- Live HUD Overlay on Canvas -->
+            <div class="absolute top-3 left-3 bg-slate-900/85 backdrop-blur border border-slate-800/80 rounded-xl p-3 text-xs font-mono space-y-1.5 shadow-lg max-w-xs pointer-events-none">
+              <div class="flex items-center justify-between gap-4 border-b border-slate-800 pb-1">
+                <span class="text-slate-400">MISSION CLOCK:</span>
+                <span id="hud-time" class="font-bold text-cyan-400">T + 0.0 s</span>
+              </div>
+              <div class="flex items-center justify-between gap-4">
+                <span class="text-slate-400">ALTITUDE (AGL):</span>
+                <span id="hud-alt" class="font-semibold text-white">0 m</span>
+              </div>
+              <div class="flex items-center justify-between gap-4">
+                <span class="text-slate-400">VELOCITY:</span>
+                <span id="hud-vel" class="font-semibold text-white">827 m/s (Mach 2.4)</span>
+              </div>
+              <div class="flex items-center justify-between gap-4">
+                <span class="text-slate-400">DOWNRANGE:</span>
+                <span id="hud-dist" class="font-semibold text-white">0 m</span>
+              </div>
+              <div class="flex items-center justify-between gap-4">
+                <span class="text-slate-400">CANARD STATE:</span>
+                <span id="hud-canard" class="font-semibold text-amber-400">STOWED</span>
+              </div>
+              <div class="flex items-center justify-between gap-4">
+                <span class="text-slate-400">FUZE STATE:</span>
+                <span id="hud-fuze" class="font-semibold text-emerald-400">SAFE</span>
+              </div>
+              <div class="flex items-center justify-between gap-4 pt-1 border-t border-slate-800">
+                <span class="text-slate-400">CONFIDENCE:</span>
+                <span id="hud-conf" class="font-bold text-emerald-400">100 %</span>
+              </div>
+            </div>
+
+            <!-- Tactical Legend -->
+            <div class="absolute bottom-3 left-3 bg-slate-900/80 backdrop-blur border border-slate-800/80 rounded-lg p-2 text-[11px] font-mono flex flex-wrap items-center gap-3 pointer-events-none">
+              <div class="flex items-center gap-1.5">
+                <span class="w-3 h-0.5 bg-emerald-400 inline-block"></span>
+                <span class="text-slate-300">Guided Path</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="w-3 h-0.5 bg-slate-400 inline-block border-dashed"></span>
+                <span class="text-slate-300">Ballistic Reference</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-red-500 inline-block"></span>
+                <span class="text-slate-300">Target Bunker (18.0 km)</span>
+              </div>
+            </div>
+
+            <!-- Dynamic Alert Box on Canvas -->
+            <div id="canvas-alert" class="absolute top-3 right-3 hidden bg-red-950/90 border border-red-500 text-red-300 px-3 py-2 rounded-xl text-xs font-mono shadow-2xl backdrop-blur max-w-xs transition-all">
+              <div class="font-bold flex items-center gap-1.5 text-red-400">
+                <span>⚠️</span> <span id="alert-title">GPS SPOOFING DETECTED</span>
+              </div>
+              <div id="alert-desc" class="text-[11px] mt-0.5 text-red-200">
+                Innovation residual exceeded gate threshold (NIS &gt; 16.3). Initiating safe dud mode.
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Phase Indicator Bar -->
+          <div class="bg-slate-950/60 rounded-xl p-2.5 border border-slate-800/80 flex items-center justify-between text-xs font-mono">
+            <div class="flex items-center gap-1.5">
+              <span id="phase-dot-1" class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span>
+              <span id="phase-lbl-1" class="text-white">1. Launch / Setback</span>
+            </div>
+            <div class="text-slate-600">→</div>
+            <div class="flex items-center gap-1.5">
+              <span id="phase-dot-2" class="w-2.5 h-2.5 rounded-full bg-slate-700"></span>
+              <span id="phase-lbl-2" class="text-slate-500">2. Centrifugal Spin Arm</span>
+            </div>
+            <div class="text-slate-600">→</div>
+            <div class="flex items-center gap-1.5">
+              <span id="phase-dot-3" class="w-2.5 h-2.5 rounded-full bg-slate-700"></span>
+              <span id="phase-lbl-3" class="text-slate-500">3. Apogee Canard Deploy</span>
+            </div>
+            <div class="text-slate-600">→</div>
+            <div class="flex items-center gap-1.5">
+              <span id="phase-dot-4" class="w-2.5 h-2.5 rounded-full bg-slate-700"></span>
+              <span id="phase-lbl-4" class="text-slate-500">4. Terminal Proximity/Dud</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Telemetry & Impact Stats Panel (1 col) -->
+        <div class="space-y-4">
+          
+          <!-- Live Telemetry Gauges -->
+          <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-4">
+            <h2 class="text-xs font-mono font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+              <span>📊</span> Flight Metrics
+            </h2>
+
+            <!-- Confidence Meter -->
+            <div class="space-y-1.5">
+              <div class="flex justify-between text-xs font-mono">
+                <span class="text-slate-400">Navigation Confidence</span>
+                <span id="meter-conf-val" class="text-emerald-400 font-bold">100%</span>
+              </div>
+              <div class="w-full bg-slate-950 rounded-full h-2.5 overflow-hidden border border-slate-800">
+                <div id="meter-conf-bar" class="bg-emerald-500 h-full rounded-full transition-all duration-300" style="width: 100%;"></div>
+              </div>
+            </div>
+
+            <!-- Height of Burst FMCW Sensor -->
+            <div class="space-y-1.5">
+              <div class="flex justify-between text-xs font-mono">
+                <span class="text-slate-400">FMCW Radar Altimeter</span>
+                <span id="meter-fmcw-val" class="text-cyan-400 font-semibold">Standby (&gt;50m)</span>
+              </div>
+              <div class="w-full bg-slate-950 rounded-full h-2 overflow-hidden border border-slate-800">
+                <div id="meter-fmcw-bar" class="bg-cyan-500 h-full rounded-full transition-all duration-150" style="width: 0%;"></div>
+              </div>
+            </div>
+
+            <!-- Zero Effort Miss Vector -->
+            <div class="p-3 bg-slate-950/70 border border-slate-800 rounded-xl space-y-2 text-xs font-mono">
+              <div class="text-slate-400 font-semibold flex justify-between">
+                <span>PREDICTED MISS (ZEM)</span>
+                <span id="zem-status" class="text-emerald-400 font-bold">CORRECTING</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-500">Range Error (ΔR):</span>
+                <span id="zem-range" class="text-slate-200">+142 m</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-500">Deflection (ΔD):</span>
+                <span id="zem-defl" class="text-slate-200">-58 m</span>
+              </div>
+              <div class="flex justify-between border-t border-slate-800 pt-1">
+                <span class="text-slate-400 font-semibold">Total Miss Dist:</span>
+                <span id="zem-total" class="text-white font-bold">153.4 m</span>
+              </div>
+            </div>
+
+            <!-- CEP Comparison Box -->
+            <div class="p-3 bg-slate-950/70 border border-slate-800 rounded-xl space-y-2 text-xs font-mono">
+              <div class="text-slate-400 font-semibold">ACCURACY (1,000 RUN CEP)</div>
+              <div class="grid grid-cols-2 gap-2 text-center pt-1">
+                <div class="bg-slate-900 border border-slate-800 p-2 rounded-lg">
+                  <div class="text-[10px] text-slate-400">UNGUIDED CEP50</div>
+                  <div class="text-sm font-bold text-amber-400">118.5 m</div>
+                </div>
+                <div class="bg-slate-900 border border-slate-800 p-2 rounded-lg">
+                  <div class="text-[10px] text-slate-400">PGK GUIDED CEP50</div>
+                  <div class="text-sm font-bold text-emerald-400">&lt; 4.8 m</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Fault Injection Controls for Demo -->
+          <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-3">
+            <h2 class="text-xs font-mono font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+              <span>⚡</span> Real-Time Fault Injection
+            </h2>
+            <div class="space-y-2">
+              <button onclick="injectSpoofingNow()" class="w-full py-2 px-3 rounded-xl text-xs font-mono font-semibold bg-red-600/20 hover:bg-red-600/30 text-red-300 border border-red-500/40 text-left flex items-center justify-between">
+                <span>🛰️ Inject GPS Spoofing Attack</span>
+                <span class="text-[10px] bg-red-500/30 px-1.5 py-0.5 rounded">TRIG</span>
+              </button>
+              <button onclick="toggleCrosswind()" id="btn-wind" class="w-full py-2 px-3 rounded-xl text-xs font-mono font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-left flex items-center justify-between">
+                <span>💨 Crosswind Gust (+15 m/s)</span>
+                <span id="badge-wind" class="text-[10px] bg-slate-700 px-1.5 py-0.5 rounded">OFF</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 2: DESPUN CANARD ACTUATION MECHANICS -->
+    <div id="tab-canard" class="tab-pane hidden space-y-4">
+      <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+        
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+          <div>
+            <h2 class="text-lg font-bold text-white flex items-center gap-2">
+              <span>🔄</span> Course-Correcting Fuze: Despun Canard Aerodynamics
+            </h2>
+            <p class="text-sm text-slate-400 mt-1">
+              How a 155 mm artillery shell spinning at 250 Hz achieves precision steering without complex 4-fin gimbal actuators.
+            </p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-mono text-slate-400">Roll Commanded Angle:</span>
+            <span id="canard-angle-val" class="text-sm font-bold font-mono text-cyan-400">45° (Range + Deflection)</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+          
+          <!-- Interactive Animated Cross Section -->
+          <div class="bg-slate-950 border border-slate-800 rounded-2xl p-6 flex flex-col items-center justify-center relative min-h-[360px] overflow-hidden">
+            
+            <div class="absolute top-3 left-3 text-xs font-mono text-slate-400 bg-slate-900/80 px-2.5 py-1 rounded border border-slate-800">
+              AXIAL CROSS-SECTION (FRONT VIEW)
+            </div>
+
+            <!-- Concentric Animation -->
+            <div class="relative w-64 h-64 flex items-center justify-center">
+              
+              <!-- Outer Spinning Shell Body (Spinning at 248 Hz) -->
+              <div class="absolute w-60 h-60 rounded-full border-4 border-dashed border-indigo-500/60 animate-spin-fast flex items-center justify-center shadow-2xl shadow-indigo-950">
+                <div class="absolute -top-3 px-2 bg-indigo-950 text-indigo-400 text-[10px] font-mono rounded">
+                  SHELL BODY: 248 Hz SPIN
+                </div>
+              </div>
+
+              <!-- Bearing Isolation Gap -->
+              <div class="absolute w-44 h-44 rounded-full border-2 border-slate-700/60 flex items-center justify-center bg-slate-900/40">
+                <div class="text-[9px] font-mono text-slate-500 text-center">
+                  Low-Friction Bearings &<br/>Alternator Brake
+                </div>
+              </div>
+
+              <!-- Despun Fuze Head with Canards (Orientable) -->
+              <div id="despun-assembly" class="absolute w-36 h-36 flex items-center justify-center transition-transform duration-500" style="transform: rotate(45deg);">
+                <!-- Fixed Canards (Pair) -->
+                <div class="absolute -top-8 w-6 h-12 bg-cyan-500 rounded-t-lg shadow-lg shadow-cyan-500/50 flex items-center justify-center">
+                  <span class="text-[9px] font-bold text-slate-950 font-mono -rotate-90">CANARD</span>
+                </div>
+                <div class="absolute -bottom-8 w-6 h-12 bg-cyan-500 rounded-b-lg shadow-lg shadow-cyan-500/50 flex items-center justify-center">
+                  <span class="text-[9px] font-bold text-slate-950 font-mono rotate-90">CANARD</span>
+                </div>
+                
+                <!-- Center Fuze Core -->
+                <div class="w-20 h-20 rounded-full bg-gradient-to-br from-cyan-600 to-slate-800 border-2 border-cyan-400 flex flex-col items-center justify-center shadow-lg text-center p-1">
+                  <span class="text-[10px] font-bold text-white font-mono">DESPUN NOSE</span>
+                  <span class="text-[8px] text-cyan-200 font-mono">0 Hz (Steady)</span>
+                </div>
+
+                <!-- Net Aerodynamic Lift Vector Arrow -->
+                <div class="absolute -right-16 flex items-center gap-1 pointer-events-none">
+                  <div class="w-14 h-1 bg-emerald-400 rounded-full shadow-lg shadow-emerald-500/80"></div>
+                  <span class="text-xs text-emerald-400 font-bold">▶ LIFT</span>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Bottom Caption -->
+            <div class="mt-4 text-xs font-mono text-center text-slate-400 max-w-sm">
+              The internal alternator acts as a controlled magnetic brake. By braking at precise phases, the canards are held steady at the desired roll angle, producing a constant net aerodynamic lift vector!
+            </div>
+          </div>
+
+          <!-- Explanatory Details & Interactive Steering Controls -->
+          <div class="space-y-4">
+            
+            <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-3">
+              <h3 class="text-sm font-semibold text-white font-mono flex items-center gap-2">
+                <span>🎯</span> Interactive Steering Vector Control
+              </h3>
+              <p class="text-xs text-slate-400">
+                Click to command the despun nose orientation. Watch how the canard roll changes the steering direction:
+              </p>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-mono">
+                <button onclick="setCanardAngle(0, 'Deflection Right (+Y)')" class="p-2 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-lg text-center">
+                  <div class="font-bold text-cyan-400">0°</div>
+                  <div class="text-[10px] text-slate-400">Turn Right</div>
+                </button>
+                <button onclick="setCanardAngle(90, 'Range Extension (+X)')" class="p-2 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-lg text-center">
+                  <div class="font-bold text-cyan-400">90°</div>
+                  <div class="text-[10px] text-slate-400">Pitch Up (Glide)</div>
+                </button>
+                <button onclick="setCanardAngle(180, 'Deflection Left (-Y)')" class="p-2 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-lg text-center">
+                  <div class="font-bold text-cyan-400">180°</div>
+                  <div class="text-[10px] text-slate-400">Turn Left</div>
+                </button>
+                <button onclick="setCanardAngle(270, 'Braking / Range Shorten (-X)')" class="p-2 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-lg text-center">
+                  <div class="font-bold text-cyan-400">270°</div>
+                  <div class="text-[10px] text-slate-400">Pitch Down</div>
+                </button>
+              </div>
+            </div>
+
+            <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-2 text-xs text-slate-300">
+              <h4 class="font-bold text-white font-mono">Why this crushes conventional hackathon designs:</h4>
+              <ul class="space-y-1.5 list-disc list-inside text-slate-400">
+                <li><strong class="text-white">Survivability</strong>: Traditional servo motors fail at 15,000 g setback. The despun PGK alternator has only one moving part (bearing slip-ring).</li>
+                <li><strong class="text-white">Zero Power Draw</strong>: The spinning shell drives the alternator, harvesting up to 50 Watts of internal electrical power from projectile spin energy without chemical batteries!</li>
+                <li><strong class="text-white">Compatibility</strong>: Standard 2-inch NATO thread replaces standard M739/M782 fuzes on any standard M107 or M795 shell.</li>
+              </ul>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 3: MIL-STD-1316 SMART FUZE STATE MACHINE -->
+    <div id="tab-fuze" class="tab-pane hidden space-y-4">
+      <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+        
+        <div class="border-b border-slate-800 pb-4">
+          <h2 class="text-lg font-bold text-white flex items-center gap-2">
+            <span>🛡️</span> MIL-STD-1316 Dual-Interlock Smart Electronic Fuze (ESAD)
+          </h2>
+          <p class="text-sm text-slate-400 mt-1">
+            Military fuzing standards mandate that two distinct, independent environmental stimuli must occur before arming can legally occur.
+          </p>
+        </div>
+
+        <!-- Interactive Animated FSM Diagram -->
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-3 relative font-mono text-xs">
+          
+          <!-- State 1: SAFE -->
+          <div id="fsm-card-safe" class="bg-slate-950 border-2 border-emerald-500 rounded-xl p-4 flex flex-col justify-between gap-3 shadow-lg shadow-emerald-950/40 transition-all">
+            <div>
+              <div class="flex items-center justify-between">
+                <span class="text-slate-400 text-[10px]">STATE 0</span>
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              </div>
+              <div class="text-sm font-bold text-emerald-400 mt-1">SAFE / STORED</div>
+              <p class="text-[11px] text-slate-400 mt-1 font-sans">
+                Fuze detonator is physically misaligned. Firing capacitors drained to ground.
+              </p>
+            </div>
+            <div class="p-2 bg-slate-900 rounded border border-slate-800 text-[10px] text-slate-300">
+              Interlocks: <span class="text-amber-400 font-bold">LOCKED</span>
+            </div>
+          </div>
+
+          <!-- State 2: INTERLOCK 1 (SETBACK) -->
+          <div id="fsm-card-env1" class="bg-slate-950 border border-slate-800 rounded-xl p-4 flex flex-col justify-between gap-3 transition-all">
+            <div>
+              <div class="flex items-center justify-between">
+                <span class="text-slate-400 text-[10px]">STATE 1</span>
+                <span id="fsm-dot-env1" class="w-2 h-2 rounded-full bg-slate-700"></span>
+              </div>
+              <div class="text-sm font-bold text-white mt-1">INTERLOCK 1</div>
+              <p class="text-[11px] text-slate-400 mt-1 font-sans">
+                Setback acceleration sensor integrates:
+                <br/><code class="text-cyan-400">∫ a_x dt &gt; 800 m/s</code><br/>
+                (&gt;12,000 g pulse).
+              </p>
+            </div>
+            <div id="fsm-stat-env1" class="p-2 bg-slate-900 rounded border border-slate-800 text-[10px] text-slate-500">
+              Trigger: <span class="font-bold">PENDING</span>
+            </div>
+          </div>
+
+          <!-- State 3: INTERLOCK 2 (SPIN) -->
+          <div id="fsm-card-env2" class="bg-slate-950 border border-slate-800 rounded-xl p-4 flex flex-col justify-between gap-3 transition-all">
+            <div>
+              <div class="flex items-center justify-between">
+                <span class="text-slate-400 text-[10px]">STATE 2</span>
+                <span id="fsm-dot-env2" class="w-2 h-2 rounded-full bg-slate-700"></span>
+              </div>
+              <div class="text-sm font-bold text-white mt-1">INTERLOCK 2</div>
+              <p class="text-[11px] text-slate-400 mt-1 font-sans">
+                Centrifugal micro-switch verifies sustained spin:
+                <br/><code class="text-indigo-400">ω &gt; 150 Hz</code> for 1.2s.
+              </p>
+            </div>
+            <div id="fsm-stat-env2" class="p-2 bg-slate-900 rounded border border-slate-800 text-[10px] text-slate-500">
+              Trigger: <span class="font-bold">PENDING</span>
+            </div>
+          </div>
+
+          <!-- State 4: ARMED / TRACKING -->
+          <div id="fsm-card-armed" class="bg-slate-950 border border-slate-800 rounded-xl p-4 flex flex-col justify-between gap-3 transition-all">
+            <div>
+              <div class="flex items-center justify-between">
+                <span class="text-slate-400 text-[10px]">STATE 3</span>
+                <span id="fsm-dot-armed" class="w-2 h-2 rounded-full bg-slate-700"></span>
+              </div>
+              <div class="text-sm font-bold text-white mt-1">ARMED / TRACK</div>
+              <p class="text-[11px] text-slate-400 mt-1 font-sans">
+                Safe arm separation achieved (&gt;500m). EKF guidance active. High-voltage fires capacitors charged.
+              </p>
+            </div>
+            <div id="fsm-stat-armed" class="p-2 bg-slate-900 rounded border border-slate-800 text-[10px] text-slate-500">
+              Status: <span class="font-bold">INACTIVE</span>
+            </div>
+          </div>
+
+          <!-- State 5: PROXIMITY BURST / DUD -->
+          <div id="fsm-card-term" class="bg-slate-950 border border-slate-800 rounded-xl p-4 flex flex-col justify-between gap-3 transition-all">
+            <div>
+              <div class="flex items-center justify-between">
+                <span class="text-slate-400 text-[10px]">STATE 4</span>
+                <span id="fsm-dot-term" class="w-2 h-2 rounded-full bg-slate-700"></span>
+              </div>
+              <div class="text-sm font-bold text-white mt-1">TERMINAL FUZE</div>
+              <p class="text-[11px] text-slate-400 mt-1 font-sans">
+                FMCW radar fires at 7 m AGL. If spoofed or off-target &gt;150m: <strong class="text-red-400">FAILS TO DUD</strong>.
+              </p>
+            </div>
+            <div id="fsm-stat-term" class="p-2 bg-slate-900 rounded border border-slate-800 text-[10px] text-slate-500">
+              Mode: <span class="font-bold">WAITING</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Manual Step Trigger for Demonstrations -->
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 flex flex-wrap items-center justify-between gap-3">
+          <div class="text-xs font-mono text-slate-400">
+            Interactive Test Driver: Step through the MIL-STD-1316 state transition sequence manually:
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="advanceFsmTest(1)" class="px-3 py-1.5 rounded-lg text-xs font-mono font-semibold bg-cyan-600 hover:bg-cyan-500 text-white">
+              1. Fire Gun (Setback)
+            </button>
+            <button onclick="advanceFsmTest(2)" class="px-3 py-1.5 rounded-lg text-xs font-mono font-semibold bg-indigo-600 hover:bg-indigo-500 text-white">
+              2. Verify Spin
+            </button>
+            <button onclick="advanceFsmTest(3)" class="px-3 py-1.5 rounded-lg text-xs font-mono font-semibold bg-emerald-600 hover:bg-emerald-500 text-white">
+              3. Safe Arm
+            </button>
+            <button onclick="advanceFsmTest(4)" class="px-3 py-1.5 rounded-lg text-xs font-mono font-semibold bg-purple-600 hover:bg-purple-500 text-white">
+              4. Proximity Burst
+            </button>
+            <button onclick="advanceFsmTest(5)" class="px-3 py-1.5 rounded-lg text-xs font-mono font-semibold bg-red-600 hover:bg-red-500 text-white">
+              Trigger Dud / Inhibit
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 4: EKF SENSOR FUSION & ANTI-SPOOFING (RAIM) -->
+    <div id="tab-cyber" class="tab-pane hidden space-y-4">
+      <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+        
+        <div class="border-b border-slate-800 pb-4">
+          <h2 class="text-lg font-bold text-white flex items-center gap-2">
+            <span>📡</span> Sensor Fusion & Chi-Square ($\chi^2$) Cyber-Resilience Engine
+          </h2>
+          <p class="text-sm text-slate-400 mt-1">
+            Real-time visualization of Error-State Extended Kalman Filter (ESKF) innovation gating rejecting adversarial GPS spoofing.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          <!-- Real-Time Residual Chart Canvas -->
+          <div class="lg:col-span-2 bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-3">
+            <div class="flex items-center justify-between text-xs font-mono">
+              <span class="text-slate-300 font-bold">NORMALIZED INNOVATION SQUARED (NIS residual: $\gamma_k = \mathbf{y}_k^T \mathbf{S}_k^{-1} \mathbf{y}_k$)</span>
+              <span class="px-2 py-0.5 rounded bg-red-500/20 text-red-400 border border-red-500/30">
+                Threshold: $\chi^2_{0.01, 3} = 11.34$
+              </span>
+            </div>
+            
+            <div class="relative w-full h-56 bg-slate-950 rounded-lg overflow-hidden border border-slate-800">
+              <canvas id="residualCanvas" class="w-full h-full block"></canvas>
+            </div>
+
+            <div class="flex items-center justify-between text-[11px] font-mono text-slate-400">
+              <span>Time window: Last 30 seconds</span>
+              <span class="text-emerald-400 font-bold" id="gate-verdict">GATE STATUS: PASSING (RESIDUALS NOMINAL)</span>
+            </div>
+          </div>
+
+          <!-- Theoretical Math & Defense Judges Cheatsheet -->
+          <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-3 text-xs font-mono">
+            <h3 class="text-sm font-bold text-white font-mono flex items-center gap-2">
+              <span>🧠</span> The Math Behind the Defense
+            </h3>
+            
+            <div class="space-y-2 text-slate-300 text-[11px] font-sans">
+              <div class="p-2.5 bg-slate-900 rounded border border-slate-800 font-mono text-[10px]">
+                <strong class="text-cyan-400">1. Innovation Vector:</strong><br/>
+                y_k = z_GPS - H * x_pred
+              </div>
+
+              <div class="p-2.5 bg-slate-900 rounded border border-slate-800 font-mono text-[10px]">
+                <strong class="text-indigo-400">2. Innovation Covariance:</strong><br/>
+                S_k = H * P_pred * H^T + R_GPS
+              </div>
+
+              <div class="p-2.5 bg-slate-900 rounded border border-slate-800 font-mono text-[10px]">
+                <strong class="text-red-400">3. Chi-Square Hypothesis Test:</strong><br/>
+                NIS = y_k^T * inv(S_k) * y_k &gt; 11.34
+              </div>
+
+              <p class="text-slate-400">
+                When an adversary's spoofer attempts to pull the shell off course, the sudden discrepancy between the IMU's high-rate physics propagation and the fake GPS coordinates causes an instantaneous NIS spike. The measurement is rejected immediately before it can contaminate the state!
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    /* =========================================================
+       155mm DIGITAL TWIN - SIMULATION & INTERACTIVE ENGINE
+       ========================================================= */
+
+    // Global Physics & Simulation State
+    const SIM = {
+      running: true,
+      time: 0,            // current simulation time (seconds)
+      dt: 0.05,           // step size
+      speed: 2,           // speed multiplier
+      scenario: 'guided', // 'guided', 'ballistic', 'spoofed'
+      crosswind: false,
+      spoofInjected: false,
+      spoofTriggerTime: 28.0, // seconds into flight when spoof occurs in 'spoofed' mode
+      finished: false,
+
+      // Projectile State:
+      // x: downrange (m), y: crossrange / deflection (m), z: altitude (m)
+      // vx, vy, vz: velocities (m/s)
+      x: 0, y: 0, z: 1,
+      vx: 600, vy: 0, vz: 570, // ~827 m/s muzzle vel at ~43.5 deg elevation
+      mass: 43.5, // kg (standard M107 shell)
+      calibre: 0.155, // m
+      area: Math.PI * Math.pow(0.155 / 2, 2),
+
+      // Target Location (18.0 km away)
+      targetX: 18000,
+      targetY: 0,
+      targetZ: 0,
+
+      // Trajectory History for Canvas Drawing
+      history: [],
+      ballisticRefHistory: [],
+
+      // Confidence & Fuze States
+      confidence: 100,
+      fuzeState: 'SAFE', // 'SAFE', 'SETBACK_ARMED', 'SPIN_ARMED', 'ARMED_TRACKING', 'PROXIMITY_BURST', 'INHIBITED_DUD'
+      canardDeployTime: 22.0, // apogee deploy
+      canardsActive: false,
+      burstTriggered: false,
+
+      // Residuals buffer for tab 4
+      nisBuffer: []
+    };
+
+    // Calculate pre-computed ballistic reference trajectory for ghost line
+    function computeBallisticReference() {
+      let x = 0, y = 0, z = 1;
+      let vx = 600, vy = 0, vz = 570;
+      let t = 0;
+      const ref = [];
+      while (z >= 0 && t < 90) {
+        const v = Math.sqrt(vx*vx + vy*vy + vz*vz);
+        const rho = 1.225 * Math.exp(-z / 8500); // barometric density
+        const mach = v / 340;
+        let cd = 0.22;
+        if (mach > 0.8 && mach < 1.2) cd = 0.42; // transonic wave drag peak
+        else if (mach >= 1.2) cd = 0.32;
+        
+        const Fdrag = 0.5 * rho * v * v * cd * SIM.area;
+        const ax = -(Fdrag * (vx / v)) / SIM.mass;
+        const az = -9.81 - (Fdrag * (vz / v)) / SIM.mass;
+        const ay = (SIM.crosswind ? 15 : 0) * 0.05; // slight drift
+
+        x += vx * 0.1;
+        y += vy * 0.1;
+        z += vz * 0.1;
+        vx += ax * 0.1;
+        vy += ay * 0.1;
+        vz += az * 0.1;
+        t += 0.1;
+
+        if (ref.length % 5 === 0) ref.push({ x, y, z });
+      }
+      return ref;
+    }
+
+    let ballisticRef = computeBallisticReference();
+
+    // Canvas references
+    const trajCanvas = document.getElementById('trajectoryCanvas');
+    const trajCtx = trajCanvas.getContext('2d');
+    const residCanvas = document.getElementById('residualCanvas');
+    const residCtx = residCanvas ? residCanvas.getContext('2d') : null;
+
+    function resizeCanvases() {
+      if (trajCanvas) {
+        trajCanvas.width = trajCanvas.clientWidth * window.devicePixelRatio;
+        trajCanvas.height = trajCanvas.clientHeight * window.devicePixelRatio;
+      }
+      if (residCanvas) {
+        residCanvas.width = residCanvas.clientWidth * window.devicePixelRatio;
+        residCanvas.height = residCanvas.clientHeight * window.devicePixelRatio;
+      }
+    }
+    window.addEventListener('resize', resizeCanvases);
+    resizeCanvases();
+
+    // Simulation Step Function
+    function stepSimulation() {
+      if (!SIM.running || SIM.finished) return;
+
+      const subSteps = SIM.speed;
+      for (let s = 0; s < subSteps; s++) {
+        const dt = SIM.dt;
+        SIM.time += dt;
+
+        // Current velocity & aerodynamic factors
+        const v = Math.sqrt(SIM.vx*SIM.vx + SIM.vy*SIM.vy + SIM.vz*SIM.vz);
+        const rho = 1.225 * Math.exp(-SIM.z / 8500); // standard atmospheric lapse
+        const mach = v / 340;
+        
+        // Mach-dependent drag coefficient curve
+        let cd = 0.22;
+        if (mach > 0.8 && mach < 1.2) {
+          cd = 0.22 + 0.22 * ((mach - 0.8) / 0.4); // transonic drag rise
+        } else if (mach >= 1.2) {
+          cd = 0.34 * Math.exp(-0.25 * (mach - 1.2)) + 0.18;
+        }
+
+        // Aerodynamic Drag Force
+        const Fdrag = 0.5 * rho * v * v * cd * SIM.area;
+        let ax = -(Fdrag * (SIM.vx / v)) / SIM.mass;
+        let ay = -(Fdrag * (SIM.vy / v)) / SIM.mass;
+        let az = -9.81 - (Fdrag * (SIM.vz / v)) / SIM.mass;
+
+        // Crosswind disturbance
+        if (SIM.crosswind) {
+          ay += 1.8; // lateral drift acceleration from crosswind
+        }
+
+        // MIL-STD-1316 State Machine Logic based on flight events
+        if (SIM.time < 0.2) {
+          SIM.fuzeState = 'SAFE';
+        } else if (SIM.time < 1.5) {
+          SIM.fuzeState = 'SETBACK_ARMED'; // Interlock 1 passed
+        } else if (SIM.time < 3.0) {
+          SIM.fuzeState = 'SPIN_ARMED';    // Interlock 2 passed
+        } else if (SIM.time < SIM.canardDeployTime) {
+          SIM.fuzeState = 'ARMED_TRACKING';
+        }
+
+        // Canard Deployment at Apogee (~22 seconds)
+        if (SIM.time >= SIM.canardDeployTime && SIM.scenario !== 'ballistic' && SIM.fuzeState !== 'INHIBITED_DUD') {
+          SIM.canardsActive = true;
+          SIM.fuzeState = 'ARMED_TRACKING';
+        }
+
+        // Cyber Attack Event Check
+        if (SIM.scenario === 'spoofed' && SIM.time >= SIM.spoofTriggerTime && !SIM.spoofInjected) {
+          SIM.spoofInjected = true;
+          document.getElementById('canvas-alert').classList.remove('hidden');
+          SIM.confidence = 6;
+          SIM.fuzeState = 'INHIBITED_DUD';
+          SIM.canardsActive = false; // lock canards neutral for safe ballistic dud drop
+        }
+
+        // Guidance Corrections (Predictive Zero-Effort-Miss PIP guidance)
+        if (SIM.canardsActive && SIM.fuzeState === 'ARMED_TRACKING') {
+          // Time to impact estimate: t_go = (targetX - x) / vx
+          const t_go = Math.max(0.1, (SIM.targetX - SIM.x) / Math.max(10, SIM.vx));
+          const predictedMissY = SIM.y + SIM.vy * t_go;
+          const predictedMissX = (SIM.x + SIM.vx * t_go) - SIM.targetX;
+
+          // Apply correction force via roll-indexed canards
+          const canardLift = 45; // Newtons
+          if (predictedMissY > 2) ay -= (canardLift / SIM.mass);
+          else if (predictedMissY < -2) ay += (canardLift / SIM.mass);
+
+          if (predictedMissX > 5) ax -= (canardLift * 0.5 / SIM.mass); // drag brake
+        }
+
+        // Integrate State (Euler-Cromer / RK approximations)
+        SIM.vx += ax * dt;
+        SIM.vy += ay * dt;
+        SIM.vz += az * dt;
+        SIM.x += SIM.vx * dt;
+        SIM.y += SIM.vy * dt;
+        SIM.z += SIM.vz * dt;
+
+        // Log trajectory point
+        if (SIM.history.length === 0 || SIM.time - SIM.history[SIM.history.length - 1].t >= 0.2) {
+          SIM.history.push({
+            x: SIM.x,
+            y: SIM.y,
+            z: SIM.z,
+            t: SIM.time
+          });
+        }
+
+        // Generate residual data for Tab 4
+        let baseNis = (SIM.spoofInjected) ? 38.5 + (Math.random() * 8) : 1.2 + (Math.random() * 2.2);
+        SIM.nisBuffer.push({ t: SIM.time, val: baseNis });
+        if (SIM.nisBuffer.length > 100) SIM.nisBuffer.shift();
+
+        // Terminal Height of Burst (HOB FMCW Radar trigger at 7m AGL)
+        if (SIM.z <= 7 && !SIM.burstTriggered && SIM.x > 15000) {
+          SIM.burstTriggered = true;
+          if (SIM.fuzeState === 'ARMED_TRACKING') {
+            SIM.fuzeState = 'PROXIMITY_BURST';
+          }
+          SIM.finished = true;
+          break;
+        }
+
+        // Ground Impact
+        if (SIM.z <= 0) {
+          SIM.z = 0;
+          SIM.finished = true;
+          break;
+        }
+      }
+
+      updateHudAndUi();
+    }
+
+    // UI and HUD Updates
+    function updateHudAndUi() {
+      const vel = Math.sqrt(SIM.vx*SIM.vx + SIM.vy*SIM.vy + SIM.vz*SIM.vz);
+      const mach = (vel / 340).toFixed(2);
+      
+      document.getElementById('hud-time').textContent = `T + ${SIM.time.toFixed(1)} s`;
+      document.getElementById('hud-alt').textContent = `${Math.round(Math.max(0, SIM.z))} m`;
+      document.getElementById('hud-vel').textContent = `${Math.round(vel)} m/s (Mach ${mach})`;
+      document.getElementById('hud-dist').textContent = `${(SIM.x / 1000).toFixed(2)} km`;
+      
+      // Canard status
+      const canardEl = document.getElementById('hud-canard');
+      if (SIM.fuzeState === 'INHIBITED_DUD') {
+        canardEl.textContent = 'LOCKED NEUTRAL (SAFE)';
+        canardEl.className = 'font-semibold text-red-400';
+      } else if (SIM.canardsActive) {
+        canardEl.textContent = 'ACTIVE (ROLL STEERING)';
+        canardEl.className = 'font-semibold text-emerald-400';
+      } else {
+        canardEl.textContent = 'STOWED';
+        canardEl.className = 'font-semibold text-amber-400';
+      }
+
+      // Fuze status
+      const fuzeEl = document.getElementById('hud-fuze');
+      fuzeEl.textContent = SIM.fuzeState.replace('_', ' ');
+      if (SIM.fuzeState === 'PROXIMITY_BURST') {
+        fuzeEl.className = 'font-bold text-cyan-300 animate-pulse';
+      } else if (SIM.fuzeState === 'INHIBITED_DUD') {
+        fuzeEl.className = 'font-bold text-red-400';
+      } else if (SIM.fuzeState === 'ARMED_TRACKING') {
+        fuzeEl.className = 'font-semibold text-emerald-400';
+      } else {
+        fuzeEl.className = 'font-semibold text-amber-400';
+      }
+
+      // Confidence Meter
+      document.getElementById('hud-conf').textContent = `${Math.round(SIM.confidence)} %`;
+      document.getElementById('meter-conf-val').textContent = `${Math.round(SIM.confidence)}%`;
+      document.getElementById('meter-conf-bar').style.width = `${SIM.confidence}%`;
+      if (SIM.confidence < 40) {
+        document.getElementById('meter-conf-bar').className = 'bg-red-500 h-full rounded-full transition-all duration-300';
+        document.getElementById('meter-conf-val').className = 'text-red-400 font-bold';
+      } else {
+        document.getElementById('meter-conf-bar').className = 'bg-emerald-500 h-full rounded-full transition-all duration-300';
+        document.getElementById('meter-conf-val').className = 'text-emerald-400 font-bold';
+      }
+
+      // FMCW Meter
+      const fmcwBar = document.getElementById('meter-fmcw-bar');
+      const fmcwVal = document.getElementById('meter-fmcw-val');
+      if (SIM.z <= 60) {
+        const pct = Math.min(100, Math.max(0, (60 - SIM.z) / 60 * 100));
+        fmcwBar.style.width = `${pct}%`;
+        fmcwVal.textContent = `${SIM.z.toFixed(1)} m (ACTIVE)`;
+        fmcwVal.className = 'text-cyan-300 font-bold';
+      } else {
+        fmcwBar.style.width = '0%';
+        fmcwVal.textContent = 'Standby (>50m)';
+        fmcwVal.className = 'text-slate-400';
+      }
+
+      // Zero Effort Miss Updates
+      const rangeErr = Math.round(SIM.x - SIM.targetX);
+      const deflErr = Math.round(SIM.y);
+      const totalMiss = Math.round(Math.sqrt(rangeErr*rangeErr + deflErr*deflErr));
+      document.getElementById('zem-range').textContent = `${rangeErr > 0 ? '+' : ''}${rangeErr} m`;
+      document.getElementById('zem-defl').textContent = `${deflErr > 0 ? '+' : ''}${deflErr} m`;
+      document.getElementById('zem-total').textContent = `${totalMiss} m`;
+
+      // Phase Dots
+      updatePhaseDots();
+    }
+
+    function updatePhaseDots() {
+      const p1 = document.getElementById('phase-dot-1');
+      const p2 = document.getElementById('phase-dot-2');
+      const p3 = document.getElementById('phase-dot-3');
+      const p4 = document.getElementById('phase-dot-4');
+
+      if (SIM.time >= 0) { p1.className = 'w-2.5 h-2.5 rounded-full bg-cyan-400'; }
+      if (SIM.time >= 2.0) { p2.className = 'w-2.5 h-2.5 rounded-full bg-indigo-400'; }
+      if (SIM.time >= SIM.canardDeployTime) { p3.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400'; }
+      if (SIM.finished) { 
+        p4.className = SIM.fuzeState === 'INHIBITED_DUD' ? 'w-2.5 h-2.5 rounded-full bg-red-400' : 'w-2.5 h-2.5 rounded-full bg-cyan-400'; 
+      }
+    }
+
+    // Render Canvas Animation
+    function renderTrajectoryCanvas() {
+      if (!trajCanvas) return;
+      const w = trajCanvas.width;
+      const h = trajCanvas.height;
+      const ctx = trajCtx;
+
+      ctx.clearRect(0, 0, w, h);
+
+      // Coordinate scaling (max Range = 20,000 m, max Alt = 8,000 m)
+      const margin = { left: 50, right: 50, top: 40, bottom: 40 };
+      const plotW = w - margin.left - margin.right;
+      const plotH = h - margin.top - margin.bottom;
+
+      function toScreenX(realX) {
+        return margin.left + (realX / 20000) * plotW;
+      }
+      function toScreenY(realZ) {
+        return (h - margin.bottom) - (realZ / 8000) * plotH;
+      }
+
+      // Draw Grid & Axes
+      ctx.strokeStyle = 'rgba(51, 65, 85, 0.4)';
+      ctx.lineWidth = 1;
+      for (let r = 4000; r <= 20000; r += 4000) {
+        const sx = toScreenX(r);
+        ctx.beginPath();
+        ctx.moveTo(sx, margin.top);
+        ctx.lineTo(sx, h - margin.bottom);
+        ctx.stroke();
+
+        ctx.fillStyle = '#64748b';
+        ctx.font = '10px monospace';
+        ctx.fillText(`${r / 1000}km`, sx - 12, h - margin.bottom + 16);
+      }
+
+      for (let alt = 2000; alt <= 8000; alt += 2000) {
+        const sy = toScreenY(alt);
+        ctx.beginPath();
+        ctx.moveTo(margin.left, sy);
+        ctx.lineTo(w - margin.right, sy);
+        ctx.stroke();
+
+        ctx.fillStyle = '#64748b';
+        ctx.font = '10px monospace';
+        ctx.fillText(`${alt}m`, 10, sy + 3);
+      }
+
+      // Ground Line
+      ctx.strokeStyle = '#334155';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(margin.left, h - margin.bottom);
+      ctx.lineTo(w - margin.right, h - margin.bottom);
+      ctx.stroke();
+
+      // Draw Target Zone (Bunker at 18 km)
+      const targetScreenX = toScreenX(SIM.targetX);
+      const targetScreenY = toScreenY(0);
+
+      // Target circle and pulse
+      ctx.strokeStyle = 'rgba(239, 68, 68, 0.8)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(targetScreenX, targetScreenY, 8, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.fillStyle = 'rgba(239, 68, 68, 0.2)';
+      ctx.fill();
+
+      ctx.fillStyle = '#ef4444';
+      ctx.font = '11px monospace';
+      ctx.fillText('TARGET', targetScreenX - 20, targetScreenY - 14);
+
+      // Draw Ballistic Reference Line (Grey dotted)
+      ctx.strokeStyle = 'rgba(148, 163, 184, 0.35)';
+      ctx.setLineDash([4, 4]);
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      for (let i = 0; i < ballisticRef.length; i++) {
+        const sx = toScreenX(ballisticRef[i].x);
+        const sy = toScreenY(ballisticRef[i].z);
+        if (i === 0) ctx.moveTo(sx, sy);
+        else ctx.lineTo(sx, sy);
+      }
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Draw Current Projectile Trajectory History
+      if (SIM.history.length > 1) {
+        ctx.strokeStyle = SIM.fuzeState === 'INHIBITED_DUD' ? '#ef4444' : '#10b981';
+        ctx.lineWidth = 2.5;
+        ctx.shadowColor = SIM.fuzeState === 'INHIBITED_DUD' ? 'rgba(239, 68, 68, 0.5)' : 'rgba(16, 185, 129, 0.5)';
+        ctx.shadowBlur = 8;
+        ctx.beginPath();
+        for (let i = 0; i < SIM.history.length; i++) {
+          const sx = toScreenX(SIM.history[i].x);
+          const sy = toScreenY(SIM.history[i].z);
+          if (i === 0) ctx.moveTo(sx, sy);
+          else ctx.lineTo(sx, sy);
+        }
+        ctx.stroke();
+        ctx.shadowBlur = 0; // reset
+      }
+
+      // Draw Shell at current position
+      const shellX = toScreenX(SIM.x);
+      const shellY = toScreenY(SIM.z);
+
+      // Shell icon & heading angle
+      const angle = Math.atan2(-SIM.vz, SIM.vx);
+      ctx.save();
+      ctx.translate(shellX, shellY);
+      ctx.rotate(angle);
+
+      // Draw Shell Body
+      ctx.fillStyle = '#f8fafc';
+      ctx.beginPath();
+      ctx.roundRect(-10, -3, 20, 6, 2);
+      ctx.fill();
+
+      // Nose cone
+      ctx.fillStyle = '#38bdf8';
+      ctx.beginPath();
+      ctx.moveTo(10, -3);
+      ctx.lineTo(16, 0);
+      ctx.lineTo(10, 3);
+      ctx.fill();
+
+      // Canards (if active)
+      if (SIM.canardsActive) {
+        ctx.fillStyle = '#10b981';
+        ctx.fillRect(4, -8, 3, 5);
+        ctx.fillRect(4, 3, 3, 5);
+      }
+
+      ctx.restore();
+
+      // Height-of-burst airburst explosion visual
+      if (SIM.fuzeState === 'PROXIMITY_BURST') {
+        ctx.save();
+        ctx.translate(shellX, shellY);
+        ctx.fillStyle = 'rgba(56, 189, 248, 0.7)';
+        ctx.beginPath();
+        ctx.arc(0, 0, 20, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 11px monospace';
+        ctx.fillText('AIRBURST (7m AGL)', -45, -28);
+        ctx.restore();
+      }
+
+      // Dud ground impact indicator
+      if (SIM.finished && SIM.fuzeState === 'INHIBITED_DUD') {
+        ctx.fillStyle = '#ef4444';
+        ctx.font = 'bold 12px monospace';
+        ctx.fillText('SAFE DUD IMPACT (NO BLAST)', shellX - 80, shellY - 20);
+      }
+    }
+
+    // Render Residual Canvas (Tab 4)
+    function renderResidualCanvas() {
+      if (!residCanvas || !residCtx) return;
+      const w = residCanvas.width;
+      const h = residCanvas.height;
+      const ctx = residCtx;
+
+      ctx.clearRect(0, 0, w, h);
+
+      // Threshold line (11.34)
+      const threshY = h - (11.34 / 50) * h;
+      ctx.strokeStyle = '#ef4444';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.moveTo(0, threshY);
+      ctx.lineTo(w, threshY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.fillStyle = '#ef4444';
+      ctx.font = '10px monospace';
+      ctx.fillText('Gate Limit (11.34)', 10, threshY - 5);
+
+      if (SIM.nisBuffer.length < 2) return;
+
+      // Plot residuals
+      ctx.strokeStyle = SIM.spoofInjected ? '#ef4444' : '#38bdf8';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      for (let i = 0; i < SIM.nisBuffer.length; i++) {
+        const sx = (i / (SIM.nisBuffer.length - 1)) * w;
+        const val = Math.min(48, SIM.nisBuffer[i].val);
+        const sy = h - (val / 50) * h;
+        if (i === 0) ctx.moveTo(sx, sy);
+        else ctx.lineTo(sx, sy);
+      }
+      ctx.stroke();
+
+      const verdict = document.getElementById('gate-verdict');
+      if (verdict) {
+        if (SIM.spoofInjected) {
+          verdict.textContent = 'GATE STATUS: BREACHED! SPOOFED MEASUREMENTS QUARANTINED';
+          verdict.className = 'text-red-400 font-bold';
+        } else {
+          verdict.textContent = 'GATE STATUS: PASSING (RESIDUALS NOMINAL)';
+          verdict.className = 'text-emerald-400 font-bold';
+        }
+      }
+    }
+
+    // Main Animation Loop
+    function animationLoop() {
+      stepSimulation();
+      renderTrajectoryCanvas();
+      renderResidualCanvas();
+      requestAnimationFrame(animationLoop);
+    }
+    requestAnimationFrame(animationLoop);
+
+    // Scenario Switcher
+    function setScenario(scen) {
+      SIM.scenario = scen;
+      resetSimulation();
+
+      document.getElementById('scen-guided').className = scen === 'guided' 
+        ? 'px-3 py-1 rounded-lg text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/50'
+        : 'px-3 py-1 rounded-lg text-xs font-semibold bg-slate-800 text-slate-400 border border-slate-700 hover:text-slate-200';
+
+      document.getElementById('scen-ballistic').className = scen === 'ballistic'
+        ? 'px-3 py-1 rounded-lg text-xs font-semibold bg-cyan-500/20 text-cyan-300 border border-cyan-500/50'
+        : 'px-3 py-1 rounded-lg text-xs font-semibold bg-slate-800 text-slate-400 border border-slate-700 hover:text-slate-200';
+
+      document.getElementById('scen-spoofed').className = scen === 'spoofed'
+        ? 'px-3 py-1 rounded-lg text-xs font-semibold bg-red-500/20 text-red-300 border border-red-500/50'
+        : 'px-3 py-1 rounded-lg text-xs font-semibold bg-slate-800 text-slate-400 border border-slate-700 hover:text-slate-200';
+    }
+
+    function resetSimulation() {
+      SIM.time = 0;
+      SIM.x = 0;
+      SIM.y = 0;
+      SIM.z = 1;
+      SIM.vx = 600;
+      SIM.vy = 0;
+      SIM.vz = 570;
+      SIM.history = [];
+      SIM.nisBuffer = [];
+      SIM.confidence = 100;
+      SIM.fuzeState = 'SAFE';
+      SIM.canardsActive = false;
+      SIM.burstTriggered = false;
+      SIM.spoofInjected = false;
+      SIM.finished = false;
+      SIM.running = true;
+
+      document.getElementById('canvas-alert').classList.add('hidden');
+      document.getElementById('play-icon').textContent = '⏸ Pause';
+      ballisticRef = computeBallisticReference();
+    }
+
+    function togglePlayPause() {
+      SIM.running = !SIM.running;
+      document.getElementById('play-icon').textContent = SIM.running ? '⏸ Pause' : '▶ Play';
+    }
+
+    function changeSpeed(val) {
+      SIM.speed = parseInt(val, 10) || 2;
+    }
+
+    function injectSpoofingNow() {
+      SIM.scenario = 'spoofed';
+      SIM.spoofTriggerTime = SIM.time + 0.1;
+    }
+
+    function toggleCrosswind() {
+      SIM.crosswind = !SIM.crosswind;
+      const badge = document.getElementById('badge-wind');
+      const btn = document.getElementById('btn-wind');
+      if (SIM.crosswind) {
+        badge.textContent = 'ACTIVE (+15m/s)';
+        badge.className = 'text-[10px] bg-cyan-500/30 text-cyan-300 px-1.5 py-0.5 rounded';
+        btn.className = 'w-full py-2 px-3 rounded-xl text-xs font-mono font-semibold bg-cyan-900/30 text-cyan-300 border border-cyan-500/50 text-left flex items-center justify-between';
+      } else {
+        badge.textContent = 'OFF';
+        badge.className = 'text-[10px] bg-slate-700 px-1.5 py-0.5 rounded';
+        btn.className = 'w-full py-2 px-3 rounded-xl text-xs font-mono font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-left flex items-center justify-between';
+      }
+      ballisticRef = computeBallisticReference();
+    }
+
+    // Tab Switching
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
+      document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+
+      ['flight', 'canard', 'fuze', 'cyber'].forEach(t => {
+        const btn = document.getElementById(`tab-btn-${t}`);
+        if (t === tabId) {
+          btn.className = 'px-4 py-2 rounded-xl text-sm font-medium transition-all bg-cyan-600 text-white shadow-lg shadow-cyan-900/30 flex items-center gap-2';
+        } else {
+          btn.className = 'px-4 py-2 rounded-xl text-sm font-medium transition-all bg-slate-900 text-slate-400 hover:text-white hover:bg-slate-800 flex items-center gap-2';
+        }
+      });
+      resizeCanvases();
+    }
+
+    // Canard Mechanics Orientation
+    function setCanardAngle(angle, label) {
+      const assembly = document.getElementById('despun-assembly');
+      assembly.style.transform = `rotate(${angle}deg)`;
+      document.getElementById('canard-angle-val').textContent = `${angle}° (${label})`;
+    }
+
+    // Manual FSM Tester (Tab 3)
+    function advanceFsmTest(step) {
+      const safe = document.getElementById('fsm-card-safe');
+      const env1 = document.getElementById('fsm-card-env1');
+      const env2 = document.getElementById('fsm-card-env2');
+      const armed = document.getElementById('fsm-card-armed');
+      const term = document.getElementById('fsm-card-term');
+
+      [safe, env1, env2, armed, term].forEach(el => {
+        el.className = 'bg-slate-950 border border-slate-800 rounded-xl p-4 flex flex-col justify-between gap-3 transition-all';
+      });
+
+      if (step === 1) {
+        env1.className = 'bg-slate-950 border-2 border-cyan-500 rounded-xl p-4 flex flex-col justify-between gap-3 shadow-lg shadow-cyan-950/50';
+        document.getElementById('fsm-stat-env1').innerHTML = 'Trigger: <span class="text-cyan-400 font-bold">VERIFIED (14.2k G)</span>';
+      } else if (step === 2) {
+        env2.className = 'bg-slate-950 border-2 border-indigo-500 rounded-xl p-4 flex flex-col justify-between gap-3 shadow-lg shadow-indigo-950/50';
+        document.getElementById('fsm-stat-env2').innerHTML = 'Trigger: <span class="text-indigo-400 font-bold">VERIFIED (248 Hz)</span>';
+      } else if (step === 3) {
+        armed.className = 'bg-slate-950 border-2 border-emerald-500 rounded-xl p-4 flex flex-col justify-between gap-3 shadow-lg shadow-emerald-950/50';
+        document.getElementById('fsm-stat-armed').innerHTML = 'Status: <span class="text-emerald-400 font-bold">ARMED & GUIDING</span>';
+      } else if (step === 4) {
+        term.className = 'bg-slate-950 border-2 border-purple-500 rounded-xl p-4 flex flex-col justify-between gap-3 shadow-lg shadow-purple-950/50';
+        document.getElementById('fsm-stat-term').innerHTML = 'Mode: <span class="text-purple-400 font-bold">HOB PROXIMITY AIRBURST</span>';
+      } else if (step === 5) {
+        term.className = 'bg-slate-950 border-2 border-red-500 rounded-xl p-4 flex flex-col justify-between gap-3 shadow-lg shadow-red-950/50';
+        document.getElementById('fsm-stat-term').innerHTML = 'Mode: <span class="text-red-400 font-bold">SAFE INHIBIT DUD TRIGGERED</span>';
+      }
+    }
+  </script>
+</body>
+</html>
