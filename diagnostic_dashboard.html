@@ -1,654 +1,624 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>HMDM Dashboard — Guidance System Health Monitor</title>
+<!DOCTYPE html><html lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>HMDM Guidance &amp; Telemetry Monitor — Flight Test Console</title>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {surface: "#031427", "primary-fixed": "#cce5ff", "on-tertiary-fixed": "#2a1700", "inverse-primary": "#006398", "on-secondary-fixed": "#082100", "primary-container": "#3198dc", "on-primary-fixed-variant": "#004b73", "surface-bright": "#2a3a4f", "inverse-on-surface": "#213145", "tertiary-container": "#ca8100", "secondary-container": "#47a50b", "on-primary-container": "#002c47", "on-error": "#690005", "tertiary-fixed": "#ffddb8", "on-surface-variant": "#bfc7d2", "on-surface": "#d3e4fe", "on-primary-fixed": "#001d31", "surface-container-high": "#1b2b3f", background: "#031427", "on-tertiary": "#472a00", "surface-variant": "#26364a", "on-secondary": "#133800", "secondary-fixed-dim": "#7cdd48", "surface-container-low": "#0b1c30", "primary-fixed-dim": "#93ccff", "surface-dim": "#031427", "surface-tint": "#93ccff", error: "#ffb4ab", "secondary-fixed": "#97fb62", "outline-variant": "#3f4850", "tertiary-fixed-dim": "#ffb95f", "surface-container-lowest": "#000f21", "on-background": "#d3e4fe", primary: "#93ccff", "surface-container": "#102034", "error-container": "#93000a", "on-error-container": "#ffdad6", "on-secondary-fixed-variant": "#1e5100", tertiary: "#ffb95f", secondary: "#7cdd48", "on-secondary-container": "#0f3100", "on-primary": "#003351", outline: "#89929b", "inverse-surface": "#d3e4fe", "surface-container-highest": "#26364a", "on-tertiary-fixed-variant": "#653e00", "on-tertiary-container": "#3e2400"}, fontFamily: {sans: ["Inter", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "sans-serif"], mono: ["JetBrains Mono", "SF Mono", "Menlo", "Consolas", "monospace"], headline: ["Inter"], display: ["Inter"], body: ["Inter"], label: ["JetBrains Mono"]}, fontSize: {}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}}}};</script>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
+  * { box-sizing: border-box; }
   body {
-    font-family: 'Segoe UI', Tahoma, sans-serif;
-    background: #0a0e17;
-    color: #e0e6f0;
-    min-height: 100vh;
-    padding: 20px;
+    background-color: #050505;
+    color: #e2e8f0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
   }
-
-  /* ---------- HEADER ---------- */
-  header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 30px;
-    background: linear-gradient(135deg, #141b2d 0%, #1a2338 100%);
-    border-radius: 12px;
-    border: 1px solid #2a3550;
-    margin-bottom: 20px;
-  }
-
-  .title-block h1 {
-    font-size: 24px;
-    letter-spacing: 2px;
-    color: #4fc3f7;
-    text-transform: uppercase;
-  }
-
-  .title-block p {
-    font-size: 13px;
-    color: #7a8ba8;
-    margin-top: 4px;
-    letter-spacing: 1px;
-  }
-
-  .status-pill {
-    padding: 14px 32px;
-    border-radius: 40px;
-    font-size: 20px;
-    font-weight: bold;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    transition: all 0.3s ease;
-  }
-
-  .status-pill.pass {
-    background: rgba(0, 230, 118, 0.15);
-    color: #00e676;
-    border: 2px solid #00e676;
-    box-shadow: 0 0 20px rgba(0, 230, 118, 0.3);
-  }
-
-  .status-pill.degraded {
-    background: rgba(255, 193, 7, 0.15);
-    color: #ffc107;
-    border: 2px solid #ffc107;
-    box-shadow: 0 0 20px rgba(255, 193, 7, 0.3);
-  }
-
-  .status-pill.fail {
-    background: rgba(255, 23, 68, 0.15);
-    color: #ff1744;
-    border: 2px solid #ff1744;
-    box-shadow: 0 0 20px rgba(255, 23, 68, 0.3);
-    animation: pulse-red 1.5s infinite;
-  }
-
-  @keyframes pulse-red {
-    0%, 100% { box-shadow: 0 0 20px rgba(255, 23, 68, 0.3); }
-    50% { box-shadow: 0 0 40px rgba(255, 23, 68, 0.7); }
-  }
-
-  .status-dot {
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: currentColor;
-    animation: blink 1.5s infinite;
-  }
-
-  @keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.3; }
-  }
-
-  /* ---------- GRID LAYOUT ---------- */
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-    margin-bottom: 20px;
-  }
-
-  .card {
-    background: linear-gradient(135deg, #141b2d 0%, #1a2338 100%);
-    border: 1px solid #2a3550;
-    border-radius: 12px;
-    padding: 20px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 4px;
-    height: 100%;
-    background: #4fc3f7;
-  }
-
-  .card.warn::before { background: #ffc107; }
-  .card.danger::before { background: #ff1744; }
-
-  .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 14px;
-  }
-
-  .card-title {
-    font-size: 12px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: #7a8ba8;
-  }
-
-  .card-badge {
-    font-size: 10px;
-    padding: 3px 10px;
-    border-radius: 20px;
-    letter-spacing: 1px;
-    font-weight: bold;
-  }
-
-  .badge-ok {
-    background: rgba(0, 230, 118, 0.15);
-    color: #00e676;
-  }
-
-  .badge-warn {
-    background: rgba(255, 193, 7, 0.15);
-    color: #ffc107;
-  }
-
-  .badge-fail {
-    background: rgba(255, 23, 68, 0.15);
-    color: #ff1744;
-  }
-
-  .metric-value {
-    font-size: 32px;
-    font-weight: bold;
-    color: #ffffff;
-    font-family: 'Courier New', monospace;
-  }
-
-  .metric-unit {
-    font-size: 14px;
-    color: #7a8ba8;
-    margin-left: 6px;
-  }
-
-  .metric-sub {
-    font-size: 12px;
-    color: #7a8ba8;
-    margin-top: 8px;
-    font-family: 'Courier New', monospace;
-  }
-
-  /* ---------- WIDE CARDS ---------- */
-  .row-2 {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 16px;
-    margin-bottom: 20px;
-  }
-
-  .full-row {
-    grid-column: 1 / -1;
-  }
-
-  /* ---------- CHART ---------- */
-  .chart-container {
-    height: 180px;
-    display: flex;
-    align-items: flex-end;
-    gap: 3px;
-    padding: 10px 0;
-    border-bottom: 1px solid #2a3550;
-  }
-
-  .bar {
-    flex: 1;
-    background: linear-gradient(180deg, #4fc3f7 0%, #0288d1 100%);
-    border-radius: 3px 3px 0 0;
-    transition: height 0.3s ease;
-    min-height: 2px;
-  }
-
-  .bar.warn {
-    background: linear-gradient(180deg, #ffc107 0%, #f57c00 100%);
-  }
-
-  .bar.danger {
-    background: linear-gradient(180deg, #ff1744 0%, #b71c1c 100%);
-  }
-
-  .chart-labels {
-    display: flex;
-    justify-content: space-between;
-    font-size: 10px;
-    color: #7a8ba8;
-    margin-top: 8px;
-  }
-
-  /* ---------- EVENT LOG ---------- */
-  .event-log {
-    height: 240px;
-    overflow-y: auto;
-    font-family: 'Courier New', monospace;
-    font-size: 12px;
-    background: #070a12;
-    border-radius: 6px;
-    padding: 12px;
-    border: 1px solid #1e2740;
-  }
-
-  .event-line {
-    padding: 5px 0;
-    border-bottom: 1px solid #111827;
-    display: flex;
-    gap: 12px;
-  }
-
-  .event-time {
-    color: #4a5568;
-    min-width: 80px;
-  }
-
-  .event-level {
-    min-width: 70px;
-    font-weight: bold;
-  }
-
-  .event-level.info { color: #4fc3f7; }
-  .event-level.warn { color: #ffc107; }
-  .event-level.error { color: #ff1744; }
-  .event-level.ok { color: #00e676; }
-
-  .event-msg {
-    color: #b0bccf;
-    flex: 1;
-  }
-
-  /* ---------- SYSTEM INFO ---------- */
-  .info-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-  }
-
-  .info-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 12px;
-    background: #070a12;
-    border-radius: 6px;
-    border: 1px solid #1e2740;
-    font-size: 13px;
-  }
-
-  .info-label {
-    color: #7a8ba8;
-  }
-
-  .info-value {
-    color: #4fc3f7;
-    font-family: 'Courier New', monospace;
-    font-weight: bold;
-  }
-
-  /* ---------- SUBSYSTEM TABLE ---------- */
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-  }
-
-  th {
-    text-align: left;
-    padding: 12px;
-    color: #7a8ba8;
-    font-size: 11px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    border-bottom: 1px solid #2a3550;
-  }
-
-  td {
-    padding: 12px;
-    border-bottom: 1px solid #111827;
-    font-family: 'Courier New', monospace;
-  }
-
-  .cell-ok { color: #00e676; }
-  .cell-warn { color: #ffc107; }
-  .cell-fail { color: #ff1744; }
-
-  /* ---------- FOOTER ---------- */
-  footer {
-    text-align: center;
-    padding: 20px;
-    color: #4a5568;
-    font-size: 11px;
-    letter-spacing: 1px;
-    margin-top: 20px;
-  }
-
-  /* ---------- SCROLLBAR ---------- */
-  ::-webkit-scrollbar { width: 8px; }
-  ::-webkit-scrollbar-track { background: #0a0e17; }
-  ::-webkit-scrollbar-thumb { background: #2a3550; border-radius: 4px; }
+  .tabular-nums { font-variant-numeric: tabular-nums; }
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: #050505; }
+  ::-webkit-scrollbar-thumb { background: #1c2b1f; border-radius: 2px; }
+  ::-webkit-scrollbar-thumb:hover { background: #2d4532; }
 </style>
 </head>
-<body>
-
-<!-- ================= HEADER ================= -->
-<header>
-  <div class="title-block">
-    <h1>HMDM Dashboard</h1>
-    <p>HEALTH MONITORING &amp; DIAGNOSTICS MODULE — GUIDANCE SYSTEM</p>
-  </div>
-  <div class="status-pill pass" id="mainStatus">
-    <span class="status-dot"></span>
-    <span id="statusText">PASS</span>
-  </div>
+<body class="min-h-screen text-slate-200 antialiased p-3.5 sm:p-5 selection:bg-emerald-950 selection:text-emerald-300">
+<!-- ================= TOP INSTRUMENT HEADER ================= -->
+<header class="bg-surface-panel border border-surface-border rounded mb-3 px-4 py-2.5 shadow-sm">
+<div class="flex flex-wrap items-center justify-between gap-3">
+<!-- Breadcrumb & Hardware Station Identification -->
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-[#090d0a] border border-surface-border flex items-center justify-center text-emerald-400">
+<span class="material-symbols-outlined text-[18px]">satellite_alt</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-mono text-xs font-semibold text-slate-100 uppercase tracking-wide">HMDM-B2 • BENCH RIG 04</span>
+<span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-950/50 border border-emerald-800/60 font-mono text-emerald-400 font-medium tracking-tight">SER-NO 884-X</span>
+<span class="text-[10px] px-1.5 py-0.5 rounded bg-surface-subtle border border-surface-border text-slate-400 font-mono">FW v4.2.8</span>
+</div>
+<div class="text-[11px] text-slate-400 font-medium">Health Monitoring &amp; Diagnostic Module — Guidance &amp; Power Telemetry System</div>
+</div>
+</div>
+<!-- Central Link Stats & Real Telemetry Clocks -->
+<div class="flex items-center gap-5 text-xs font-mono">
+<div class="border-l border-surface-border pl-4">
+<div class="text-[10px] text-slate-400 uppercase tracking-wider">UTC Time</div>
+<div class="font-semibold text-slate-100 tabular-nums" id="utcClock">2026-09-23 03:35:22 UTC</div>
+</div>
+<div class="border-l border-surface-border pl-4">
+<div class="text-[10px] text-slate-400 uppercase tracking-wider">Mission Elapsed (MET)</div>
+<div class="font-semibold text-slate-100 tabular-nums" id="uptime">T+00:13:38</div>
+</div>
+<div class="border-l border-surface-border pl-4 hidden md:block">
+<div class="text-[10px] text-slate-400 uppercase tracking-wider">Downlink RF Link</div>
+<div class="text-slate-300 font-medium flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+<span class="">142.850 MHz • -71 dBm</span>
+</div>
+</div>
+</div>
+<!-- Actions & Master Operational Status -->
+<div class="flex items-center gap-3">
+<div class="hidden xl:flex items-center gap-1 bg-surface-raised border border-surface-border rounded p-0.5 text-xs">
+<button class="px-2.5 py-1 text-slate-300 hover:text-white rounded hover:bg-surface-subtle transition-colors text-[11px] font-medium flex items-center gap-1" id="freezeBtn" onclick="toggleFreeze()">
+<span class="material-symbols-outlined text-[13px]">pause</span> Freeze
+        </button>
+<button class="px-2.5 py-1 text-slate-300 hover:text-white rounded hover:bg-surface-subtle transition-colors text-[11px] font-medium flex items-center gap-1" onclick="downloadCSV()">
+<span class="material-symbols-outlined text-[13px]">download</span> Export CSV
+        </button>
+</div>
+<!-- Master Health Status Pill -->
+<div class="flex items-center gap-2 px-3 py-1.5 rounded border border-emerald-800/80 bg-emerald-950/40 text-emerald-400" id="mainStatusPill">
+<span class="w-2 h-2 rounded-full bg-emerald-400" id="mainStatusDot"></span>
+<div class="leading-tight">
+<div class="text-[9px] uppercase tracking-wider font-mono text-emerald-400/80">Flight Rig Status</div>
+<div class="font-mono text-xs font-semibold tracking-tight" id="statusText">NOMINAL / ALL SENSORS LOCKED</div>
+</div>
+</div>
+</div>
+</div>
 </header>
-
-<!-- ================= TOP METRIC CARDS ================= -->
-<div class="grid">
-  <div class="card" id="cardVoltage">
-    <div class="card-header">
-      <span class="card-title">Power Rail</span>
-      <span class="card-badge badge-ok" id="badgeVoltage">OK</span>
-    </div>
-    <div><span class="metric-value" id="voltageVal">3.31</span><span class="metric-unit">V</span></div>
-    <div class="metric-sub">Current: <span id="currentVal">145</span> mA</div>
-  </div>
-
-  <div class="card" id="cardTemp">
-    <div class="card-header">
-      <span class="card-title">Temperature</span>
-      <span class="card-badge badge-ok" id="badgeTemp">OK</span>
-    </div>
-    <div><span class="metric-value" id="tempVal">28.5</span><span class="metric-unit">°C</span></div>
-    <div class="metric-sub">Limit: 60.0 °C</div>
-  </div>
-
-  <div class="card" id="cardVibration">
-    <div class="card-header">
-      <span class="card-title">Vibration</span>
-      <span class="card-badge badge-ok" id="badgeVibration">OK</span>
-    </div>
-    <div><span class="metric-value" id="vibVal">0.02</span><span class="metric-unit">g</span></div>
-    <div class="metric-sub">Peak: <span id="vibPeak">1.00</span> g</div>
-  </div>
-
-  <div class="card" id="cardHeartbeat">
-    <div class="card-header">
-      <span class="card-title">Guidance Heartbeat</span>
-      <span class="card-badge badge-ok" id="badgeHeartbeat">ALIVE</span>
-    </div>
-    <div><span class="metric-value" id="heartbeatVal">100</span><span class="metric-unit">%</span></div>
-    <div class="metric-sub">Last: <span id="heartbeatLast">0.2</span> s ago</div>
-  </div>
+<!-- ================= TOP 4 HARDWARE TELEMETRY CARDS ================= -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
+<!-- Voltage Rail (INA219) -->
+<div class="bg-surface-panel border border-surface-border rounded p-3 relative">
+<div class="flex items-center justify-between mb-1.5">
+<div class="flex items-center gap-1.5 text-slate-300 text-xs font-medium">
+<span class="material-symbols-outlined text-[14px] text-emerald-400">bolt</span>
+<span class="">Primary Rail • INA219</span>
 </div>
-
-<!-- ================= CHART + INFO ROW ================= -->
-<div class="row-2">
-  <div class="card">
-    <div class="card-header">
-      <span class="card-title">Voltage Trend — Last 60 Seconds</span>
-      <span class="card-badge badge-ok">LIVE</span>
-    </div>
-    <div class="chart-container" id="voltageChart">
-      <!-- Bars injected by JavaScript -->
-    </div>
-    <div class="chart-labels">
-      <span>-60s</span>
-      <span>-45s</span>
-      <span>-30s</span>
-      <span>-15s</span>
-      <span>NOW</span>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-header">
-      <span class="card-title">System Info</span>
-    </div>
-    <div class="info-grid">
-      <div class="info-item">
-        <span class="info-label">Uptime</span>
-        <span class="info-value" id="uptime">00:12:34</span>
-      </div>
-      <div class="info-item">
-        <span class="info-label">Boot Count</span>
-        <span class="info-value" id="bootCount">1</span>
-      </div>
-      <div class="info-item">
-        <span class="info-label">Events</span>
-        <span class="info-value" id="eventCount">5</span>
-      </div>
-      <div class="info-item">
-        <span class="info-label">Active Faults</span>
-        <span class="info-value" id="activeFaults">0</span>
-      </div>
-      <div class="info-item">
-        <span class="info-label">Telemetry</span>
-        <span class="info-value" id="telemetryStatus">OK</span>
-      </div>
-      <div class="info-item">
-        <span class="info-label">Logging</span>
-        <span class="info-value" id="loggingStatus">OK</span>
-      </div>
-    </div>
-  </div>
+<span class="px-1.5 py-0.2 rounded text-[10px] font-mono font-medium tracking-tight bg-emerald-950/60 text-emerald-400 border border-emerald-800/70" id="badgeVoltage">STABLE</span>
 </div>
-
-<!-- ================= EVENT LOG ================= -->
-<div class="card full-row" style="margin-bottom: 20px;">
-  <div class="card-header">
-    <span class="card-title">Event Log</span>
-    <span class="card-badge badge-ok" id="logBadge">RECORDING</span>
-  </div>
-  <div class="event-log" id="eventLog">
-    <div class="event-line">
-      <span class="event-time">00:00:01</span>
-      <span class="event-level ok">PASS</span>
-      <span class="event-msg">System initialized — all subsystems nominal</span>
-    </div>
-    <div class="event-line">
-      <span class="event-time">00:00:15</span>
-      <span class="event-level info">DISTURB</span>
-      <span class="event-msg">Vibration 2.3g detected — logged, no fault</span>
-    </div>
-    <div class="event-line">
-      <span class="event-time">00:00:22</span>
-      <span class="event-level warn">DEGRADED</span>
-      <span class="event-msg">IMU timeout — sensor not responding on I2C bus</span>
-    </div>
-    <div class="event-line">
-      <span class="event-time">00:00:25</span>
-      <span class="event-level ok">RECOVERY</span>
-      <span class="event-msg">IMU responding again — monitoring for recurrence</span>
-    </div>
-    <div class="event-line">
-      <span class="event-time">00:00:30</span>
-      <span class="event-level ok">PASS</span>
-      <span class="event-msg">All systems nominal</span>
-    </div>
-  </div>
+<div class="flex items-baseline gap-2 mb-2">
+<span class="font-mono text-2xl font-bold tracking-tight text-white tabular-nums" id="voltageVal">3.323</span>
+<span class="font-mono text-xs text-slate-400">VDC</span>
+<span class="ml-auto font-mono text-xs text-slate-400 tabular-nums"><span id="currentVal" class="">141</span> mA</span>
 </div>
-
-<!-- ================= SUBSYSTEM STATUS TABLE ================= -->
-<div class="card full-row">
-  <div class="card-header">
-    <span class="card-title">Subsystem Health Matrix</span>
-    <span class="card-badge badge-ok">8 MONITORED</span>
-  </div>
-  <table>
-    <thead>
-      <tr>
-        <th>Subsystem</th>
-        <th>Sensor</th>
-        <th>Reading</th>
-        <th>Status</th>
-        <th>Last Update</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>Motion / IMU</td>
-        <td>MPU6050</td>
-        <td>1.00 g (Z)</td>
-        <td class="cell-ok">OK</td>
-        <td>0.2 s ago</td>
-      </tr>
-      <tr>
-        <td>Power Rail</td>
-        <td>INA219</td>
-        <td>3.31 V / 145 mA</td>
-        <td class="cell-ok">OK</td>
-        <td>0.2 s ago</td>
-      </tr>
-      <tr>
-        <td>Temperature</td>
-        <td>DS18B20</td>
-        <td>28.5 °C</td>
-        <td class="cell-ok">OK</td>
-        <td>1.0 s ago</td>
-      </tr>
-      <tr>
-        <td>Heartbeat</td>
-        <td>GPIO line</td>
-        <td>100% duty</td>
-        <td class="cell-ok">OK</td>
-        <td>0.2 s ago</td>
-      </tr>
-      <tr>
-        <td>Communications</td>
-        <td>CAN transceiver</td>
-        <td>0 errors</td>
-        <td class="cell-ok">OK</td>
-        <td>0.2 s ago</td>
-      </tr>
-      <tr>
-        <td>Data Logging</td>
-        <td>microSD</td>
-        <td>5 events written</td>
-        <td class="cell-ok">OK</td>
-        <td>0.2 s ago</td>
-      </tr>
-      <tr>
-        <td>Telemetry</td>
-        <td>UART</td>
-        <td>5 Hz stream</td>
-        <td class="cell-ok">OK</td>
-        <td>0.2 s ago</td>
-      </tr>
-      <tr>
-        <td>Watchdog</td>
-        <td>Internal WDT</td>
-        <td>0 resets</td>
-        <td class="cell-ok">OK</td>
-        <td>0.2 s ago</td>
-      </tr>
-    </tbody>
-  </table>
+<!-- Engineering tolerance progress rail -->
+<div class="space-y-1 text-[11px] font-mono">
+<div class="w-full bg-[#080b08] rounded-sm h-1.5 overflow-hidden flex border border-surface-border">
+<div class="bg-emerald-400 h-full transition-all duration-300" id="voltageMeter" style="width: 57.6798%;"></div>
 </div>
+<div class="flex justify-between text-[10px] text-slate-400">
+<span class="">MIN: 3.15V</span>
+<span class="">NOM: 3.30V</span>
+<span class="">MAX: 3.45V</span>
+</div>
+</div>
+</div>
+<!-- Thermal Junction (DS18B20) -->
+<div class="bg-surface-panel border border-surface-border rounded p-3 relative">
+<div class="flex items-center justify-between mb-1.5">
+<div class="flex items-center gap-1.5 text-slate-300 text-xs font-medium">
+<span class="material-symbols-outlined text-[14px] text-amber-400">thermostat</span>
+<span class="">Junction Core • DS18B20</span>
+</div>
+<span class="px-1.5 py-0.2 rounded text-[10px] font-mono font-medium tracking-tight bg-emerald-950/60 text-emerald-400 border border-emerald-800/70" id="badgeTemp">OPTIMAL</span>
+</div>
+<div class="flex items-baseline gap-2 mb-2">
+<span class="font-mono text-2xl font-bold tracking-tight text-white tabular-nums" id="tempVal">28.6</span>
+<span class="font-mono text-xs text-slate-400">°C</span>
+<span class="ml-auto font-mono text-xs text-slate-400 tabular-nums">83.3 °F</span>
+</div>
+<!-- Engineering tolerance progress rail -->
+<div class="space-y-1 text-[11px] font-mono">
+<div class="w-full bg-[#080b08] rounded-sm h-1.5 overflow-hidden flex border border-surface-border">
+<div class="bg-emerald-400 h-full transition-all duration-300" id="tempMeter" style="width: 47.6611%;"></div>
+</div>
+<div class="flex justify-between text-[10px] text-slate-400">
+<span class="">0.0°C</span>
+<span class="">LIMIT: 60.0°C</span>
+<span class="">CRIT: 85.0°C</span>
+</div>
+</div>
+</div>
+<!-- IMU G-Force Vector (MPU-6050) -->
+<div class="bg-surface-panel border border-surface-border rounded p-3 relative">
+<div class="flex items-center justify-between mb-1.5">
+<div class="flex items-center gap-1.5 text-slate-300 text-xs font-medium">
+<span class="material-symbols-outlined text-[14px] text-emerald-400">vibration</span>
+<span class="">3-Axis IMU • MPU-6050</span>
+</div>
+<span class="px-1.5 py-0.2 rounded text-[10px] font-mono font-medium tracking-tight bg-emerald-950/60 text-emerald-400 border border-emerald-800/70" id="badgeVibration">NOMINAL</span>
+</div>
+<div class="flex items-baseline gap-2 mb-2">
+<span class="font-mono text-2xl font-bold tracking-tight text-white tabular-nums" id="vibVal">0.011</span>
+<span class="font-mono text-xs text-slate-400">G [RMS]</span>
+<span class="ml-auto font-mono text-[11px] text-slate-400 tabular-nums">PEAK: <span class="text-slate-300 font-semibold" id="vibPeak">1.00</span> G</span>
+</div>
+<div class="space-y-1 text-[11px] font-mono">
+<div class="w-full bg-[#080b08] rounded-sm h-1.5 overflow-hidden flex border border-surface-border">
+<div class="bg-emerald-500 h-full transition-all duration-300" id="vibMeter" style="width: 2.27415%;"></div>
+</div>
+<div class="flex justify-between text-[10px] text-slate-400">
+<span class="">NOISE: 0.008G</span>
+<span class="">WARN: 2.00G</span>
+<span class="">MAX: 16.0G</span>
+</div>
+</div>
+</div>
+<!-- Flight Bus & Watchdog Status -->
+<div class="bg-surface-panel border border-surface-border rounded p-3 relative">
+<div class="flex items-center justify-between mb-1.5">
+<div class="flex items-center gap-1.5 text-slate-300 text-xs font-medium">
+<span class="material-symbols-outlined text-[14px] text-emerald-400">sensors</span>
+<span class="">Watchdog • Bus Heartbeat</span>
+</div>
+<span class="px-1.5 py-0.2 rounded text-[10px] font-mono font-medium tracking-tight bg-emerald-950/60 text-emerald-400 border border-emerald-800/70" id="badgeHeartbeat">SYNCHRONIZED</span>
+</div>
+<div class="flex items-baseline gap-2 mb-2">
+<span class="font-mono text-2xl font-bold tracking-tight text-white tabular-nums" id="heartbeatVal">100</span>
+<span class="font-mono text-xs text-slate-400">% SYN</span>
+<span class="ml-auto font-mono text-[11px] text-slate-400 tabular-nums">LATENCY: <span class="text-slate-300" id="heartbeatLast">0.2</span>s</span>
+</div>
+<div class="space-y-1 text-[11px] font-mono">
+<div class="w-full bg-[#080b08] rounded-sm h-1.5 overflow-hidden flex border border-surface-border">
+<div class="bg-emerald-400 h-full" style="width: 100%;"></div>
+</div>
+<div class="flex justify-between text-[10px] text-slate-400">
+<span class="">TIMEOUT: 1.50s</span>
+<span class="">PKT DROP: 0.00%</span>
+<span class="">WDT: OK</span>
+</div>
+</div>
+</div>
+</div>
+<!-- ================= CENTRAL SECTION (TELEMETRY SCOPE + AVIONICS MCU INFO) ================= -->
+<div class="grid grid-cols-1 gap-3 mb-3">
+<!-- Left (8 Cols): Dual Telemetry Graph & Vector Readouts -->
+<div class="bg-surface-panel border border-surface-border rounded p-3.5 flex flex-col justify-between w-full">
+<div>
+<div class="flex items-center justify-between pb-2 mb-2 border-b border-surface-border">
+<div class="flex items-center gap-2">
+<span class="font-medium text-xs text-slate-200">Power Rail Voltage &amp; Current Transients</span>
+<span class="font-mono text-[10px] text-slate-400">60-SECOND ROLLING WINDOW • 1000 Hz SAMPLE RATE</span>
+</div>
+<div class="flex items-center gap-3 font-mono text-[11px]">
+<span class="flex items-center gap-1.5 text-slate-300">
+<span class="w-2.5 h-1 bg-emerald-400 inline-block rounded-sm"></span> V_BUS (V)
+          </span>
+<span class="flex items-center gap-1.5 text-slate-300">
+<span class="w-2.5 h-1 bg-emerald-600 inline-block rounded-sm"></span> I_DRAW (mA)
+          </span>
+<span class="px-1.5 py-0.5 rounded text-[10px] bg-surface-subtle text-emerald-400 border border-surface-border">CH-01</span>
+</div>
+</div>
+<!-- Scope Display Canvas Area -->
+<div class="relative bg-[#060806] border border-surface-border rounded p-3 h-48 flex flex-col justify-between overflow-hidden">
+<!-- Scope Background Grid lines -->
+<div class="absolute inset-0 pointer-events-none flex flex-col justify-between py-3 px-10 opacity-30">
+<div class="border-b border-dashed border-emerald-950 w-full"></div>
+<div class="border-b border-dashed border-emerald-950 w-full"></div>
+<div class="border-b border-dashed border-emerald-950 w-full"></div>
+<div class="border-b border-dashed border-emerald-950 w-full"></div>
+<div class="border-b border-emerald-900/40 w-full"></div>
+</div>
+<!-- Left Y-Axis Scale Values -->
+<div class="absolute left-2 top-2 bottom-6 flex flex-col justify-between text-[9px] font-mono text-slate-400 pointer-events-none z-10 tabular-nums">
+<span class="">3.45V</span>
+<span class="">3.35V</span>
+<span class="">3.30V</span>
+<span class="">3.25V</span>
+<span class="">3.15V</span>
+</div>
+<!-- Time Series Bars / Line Simulation -->
+<div class="relative ml-8 mr-2 h-36 flex items-end gap-1 z-10" id="voltageChart"><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-60s: 3.316 V" style="height: 55.436%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-59s: 3.320 V" style="height: 56.6772%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-58s: 3.302 V" style="height: 50.7186%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-57s: 3.319 V" style="height: 56.2649%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-56s: 3.312 V" style="height: 54.112%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-55s: 3.302 V" style="height: 50.7996%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-54s: 3.321 V" style="height: 56.9903%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-53s: 3.318 V" style="height: 56.147%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-52s: 3.317 V" style="height: 55.7568%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-51s: 3.304 V" style="height: 51.2404%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-50s: 3.316 V" style="height: 55.3376%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-49s: 3.318 V" style="height: 55.8637%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-48s: 3.306 V" style="height: 52.1151%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-47s: 3.317 V" style="height: 55.7508%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-46s: 3.309 V" style="height: 53.1513%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-45s: 3.309 V" style="height: 52.926%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-44s: 3.316 V" style="height: 55.2416%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-43s: 3.311 V" style="height: 53.8283%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-42s: 3.308 V" style="height: 52.5808%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-41s: 3.310 V" style="height: 53.1874%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-40s: 3.308 V" style="height: 52.6965%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-39s: 3.323 V" style="height: 57.7134%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-38s: 3.304 V" style="height: 51.4579%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-37s: 3.320 V" style="height: 56.6849%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-36s: 3.310 V" style="height: 53.3661%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-35s: 3.325 V" style="height: 58.2773%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-34s: 3.310 V" style="height: 53.374%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-33s: 3.306 V" style="height: 51.8377%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-32s: 3.312 V" style="height: 53.9648%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-31s: 3.312 V" style="height: 53.8774%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-30s: 3.308 V" style="height: 52.7114%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-29s: 3.322 V" style="height: 57.1671%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-28s: 3.313 V" style="height: 54.1752%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-27s: 3.315 V" style="height: 54.8778%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-26s: 3.315 V" style="height: 54.9265%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-25s: 3.316 V" style="height: 55.2413%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-24s: 3.304 V" style="height: 51.4797%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-23s: 3.325 V" style="height: 58.1931%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-22s: 3.310 V" style="height: 53.1898%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-21s: 3.310 V" style="height: 53.1806%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-20s: 3.325 V" style="height: 58.3877%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-19s: 3.323 V" style="height: 57.7037%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-18s: 3.318 V" style="height: 55.9693%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-17s: 3.311 V" style="height: 53.7643%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-16s: 3.323 V" style="height: 57.6606%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-15s: 3.302 V" style="height: 50.7168%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-14s: 3.322 V" style="height: 57.2146%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-13s: 3.309 V" style="height: 53.0882%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-12s: 3.317 V" style="height: 55.701%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-11s: 3.319 V" style="height: 56.4743%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-10s: 3.308 V" style="height: 52.657%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-9s: 3.306 V" style="height: 51.8882%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-8s: 3.303 V" style="height: 50.9443%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-7s: 3.311 V" style="height: 53.5113%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-6s: 3.320 V" style="height: 56.793%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-5s: 3.306 V" style="height: 52.0881%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-4s: 3.314 V" style="height: 54.6491%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-3s: 3.311 V" style="height: 53.6132%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-2s: 3.319 V" style="height: 56.1983%;"></div><div class="flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer" title="T-1s: 3.323 V" style="height: 57.6798%;"></div></div>
+<!-- X-Axis Timeline Markers -->
+<div class="flex justify-between text-[10px] font-mono text-slate-400 pt-1 border-t border-surface-border z-10 pl-8">
+<span class="">T-60s</span>
+<span class="">T-45s</span>
+<span class="">T-30s</span>
+<span class="">T-15s</span>
+<span class="text-emerald-400 font-semibold">T-0 (LIVE)</span>
+</div>
+</div>
+</div>
+<!-- IMU Sub-Vector Real Telemetry Metrics Bar -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-3 mt-3 border-t border-surface-border font-mono text-xs">
+<div class="bg-surface-raised border border-surface-border rounded px-2.5 py-2">
+<div class="text-[10px] text-slate-400 uppercase">Accel Axis-X</div>
+<div class="font-semibold text-slate-100 tabular-nums flex items-baseline justify-between mt-0.5">
+<span id="axVal" class="">0.006 g</span>
+<span class="text-[10px] text-slate-400 font-normal">CAL: OK</span>
+</div>
+</div>
+<div class="bg-surface-raised border border-surface-border rounded px-2.5 py-2">
+<div class="text-[10px] text-slate-400 uppercase">Accel Axis-Y</div>
+<div class="font-semibold text-slate-100 tabular-nums flex items-baseline justify-between mt-0.5">
+<span id="ayVal" class="">-0.012 g</span>
+<span class="text-[10px] text-slate-400 font-normal">CAL: OK</span>
+</div>
+</div>
+<div class="bg-surface-raised border border-surface-border rounded px-2.5 py-2">
+<div class="text-[10px] text-slate-400 uppercase">Accel Axis-Z (1G)</div>
+<div class="font-semibold text-slate-100 tabular-nums flex items-baseline justify-between mt-0.5">
+<span id="azVal" class="">0.997 g</span>
+<span class="text-[10px] text-emerald-400 font-normal">NOMINAL</span>
+</div>
+</div>
+<div class="bg-surface-raised border border-surface-border rounded px-2.5 py-2">
+<div class="text-[10px] text-slate-400 uppercase">Gyro Drift Rate</div>
+<div class="font-semibold text-slate-100 tabular-nums flex items-baseline justify-between mt-0.5">
+<span class="">0.012 °/s</span>
+<span class="text-[10px] text-emerald-400 font-normal">&lt;0.05°</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Right (4 Cols): Flight Avionics Controller Status Card -->
 
-<footer>
-  HMDM — ROUND 1 FUNCTIONAL DEMONSTRATOR — BENCH VALIDATION ONLY — NOT QUALIFIED FOR FLIGHT
+</div>
+<!-- ================= BOTTOM SECTION (EVENT LOG + HARDWARE BUS MATRIX) ================= -->
+<div class="flex flex-col gap-3 mb-3"><div class="w-full bg-surface-panel border border-surface-border rounded p-3.5 flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between pb-2 mb-3 border-b border-surface-border">
+<div class="text-xs font-semibold text-slate-200">Avionics Computer Telemetry</div>
+<span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-surface-subtle text-emerald-400 border border-surface-border">STM32H753XI</span>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 text-xs font-mono">
+<div class="p-2 rounded bg-surface-raised border border-surface-border">
+<div class="text-[10px] text-slate-400">MCU Core Temp</div>
+<div class="text-sm font-semibold text-slate-100 mt-0.5 tabular-nums">38.4 °C</div>
+<div class="text-[9px] text-slate-400 mt-0.5">Die Limit: 105 °C</div>
+</div>
+<div class="p-2 rounded bg-surface-raised border border-surface-border">
+<div class="text-[10px] text-slate-400">SRAM Free Heap</div>
+<div class="text-sm font-semibold text-slate-100 mt-0.5 tabular-nums">742.6 kB</div>
+<div class="text-[9px] text-slate-400 mt-0.5">72.4% Available</div>
+</div>
+<div class="p-2 rounded bg-surface-raised border border-surface-border">
+<div class="text-[10px] text-slate-400">CAN Bus Frames</div>
+<div class="text-sm font-semibold text-slate-100 mt-0.5 tabular-nums" id="canFrames">41,209 pkts</div>
+<div class="text-[9px] text-emerald-400 mt-0.5">0 Bus-Off Errors</div>
+</div>
+<div class="p-2 rounded bg-surface-raised border border-surface-border">
+<div class="text-[10px] text-slate-400">CRC Checksum Err</div>
+<div class="text-sm font-semibold text-emerald-400 mt-0.5 tabular-nums" id="activeFaults">0 (0.00%)</div>
+<div class="text-[9px] text-slate-400 mt-0.5">MIL-STD Integrity</div>
+</div>
+<div class="p-2 rounded bg-surface-raised border border-surface-border">
+<div class="text-[10px] text-slate-400">Telemetry Events</div>
+<div class="text-sm font-semibold text-slate-100 mt-0.5 tabular-nums" id="eventCount">5 logged</div>
+<div class="text-[9px] text-slate-400 mt-0.5">Ring buffer OK</div>
+</div>
+<div class="p-2 rounded bg-surface-raised border border-surface-border">
+<div class="text-[10px] text-slate-400">Watchdog Timer</div>
+<div class="text-sm font-semibold text-slate-100 mt-0.5 tabular-nums">1.28 s (Tick)</div>
+<div class="text-[9px] text-slate-400 mt-0.5">Reset Margin: Safe</div>
+</div>
+</div>
+</div>
+<!-- Storage and Flash Capacity Meter -->
+<div class="mt-4 pt-3 border-t border-surface-border text-xs font-mono flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+<div class="flex-1 pr-4">
+<div class="flex justify-between items-center mb-1 text-[11px]">
+<span class="text-slate-400">NOR Flash Blackbox Allocation</span>
+<span class="text-slate-200 font-medium">18.4 MB / 128 MB</span>
+</div>
+<div class="w-full bg-[#080b08] rounded-sm h-1.5 overflow-hidden flex border border-surface-border">
+<div class="bg-emerald-500 h-full" style="width: 14.3%;"></div>
+</div>
+</div>
+<div class="flex items-center gap-4 text-[10px] text-slate-400 shrink-0">
+<span class="">IGNITION CYCLES: <span class="text-slate-300 font-semibold" id="bootCount">1</span></span>
+<span class="">BENCH HARNESS: ID-44</span>
+</div>
+</div>
+</div>
+<!-- Top / Left Panel: Chronological Diagnostic Event Log -->
+<div class="w-full bg-surface-panel border border-surface-border rounded p-3.5 flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between pb-2 mb-2 border-b border-surface-border">
+<div class="text-xs font-semibold text-slate-200 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[15px] text-slate-400">receipt_long</span>
+<span class="">System Diagnostic Event Log</span>
+</div>
+<div class="flex items-center gap-1 font-mono text-[10px]">
+<button class="px-2 py-0.5 rounded bg-surface-subtle text-emerald-400 font-medium border border-surface-border">ALL</button>
+<button class="px-2 py-0.5 rounded text-slate-400 hover:text-white">FAULTS</button>
+<button class="px-2 py-0.5 rounded text-slate-400 hover:text-white">WARN</button>
+</div>
+</div>
+<!-- Scrollable event feed -->
+<div class="space-y-1.5 font-mono text-[11px] overflow-y-auto max-h-[160px] pr-1" id="eventLog">
+<div class="p-1.5 rounded bg-surface-raised border border-surface-border flex items-start gap-2">
+<span class="text-slate-400 tabular-nums shrink-0">14:22:08.012</span>
+<span class="px-1 rounded text-[9px] font-semibold bg-emerald-950/70 text-emerald-400 border border-emerald-800/80 shrink-0">NOMINAL</span>
+<span class="text-slate-300 leading-tight">Flight Guidance system initialized. Inertial reference converged.</span>
+</div>
+<div class="p-1.5 rounded bg-surface-raised border border-surface-border flex items-start gap-2">
+<span class="text-slate-400 tabular-nums shrink-0">14:22:15.840</span>
+<span class="px-1 rounded text-[9px] font-semibold bg-emerald-950/70 text-emerald-300 border border-emerald-800/80 shrink-0">TELEMETRY</span>
+<span class="text-slate-300 leading-tight">Power rail INA219 current transient +12mA within expected operational boundary.</span>
+</div>
+<div class="p-1.5 rounded bg-surface-raised border border-surface-border flex items-start gap-2">
+<span class="text-slate-400 tabular-nums shrink-0">14:22:22.410</span>
+<span class="px-1 rounded text-[9px] font-semibold bg-amber-950/70 text-amber-400 border border-amber-800/80 shrink-0">ADVISORY</span>
+<span class="text-slate-300 leading-tight">I2C bus sensor arbitration latency 3.8ms on secondary telemetry channel.</span>
+</div>
+<div class="p-1.5 rounded bg-surface-raised border border-surface-border flex items-start gap-2">
+<span class="text-slate-400 tabular-nums shrink-0">14:22:25.105</span>
+<span class="px-1 rounded text-[9px] font-semibold bg-emerald-950/70 text-emerald-400 border border-emerald-800/80 shrink-0">RECOVERY</span>
+<span class="text-slate-300 leading-tight">I2C transaction recovered. MPU-6050 sample stream normalized at 1000Hz.</span>
+</div>
+<div class="p-1.5 rounded bg-surface-raised border border-surface-border flex items-start gap-2">
+<span class="text-slate-400 tabular-nums shrink-0">14:22:30.000</span>
+<span class="px-1 rounded text-[9px] font-semibold bg-emerald-950/70 text-emerald-400 border border-emerald-800/80 shrink-0">NOMINAL</span>
+<span class="text-slate-300 leading-tight">Target ballistic waypoint calculation aligned to test trajectory profile ALPHA-7.</span>
+</div>
+</div>
+</div>
+<div class="pt-2 mt-2 border-t border-surface-border flex justify-between items-center text-[10px] font-mono text-slate-400">
+<span class="">LOG CAPACITY: 1,024 BUFFER ROWS</span>
+<span class="text-emerald-400 font-medium">AUTO-SCROLL: ENGAGED</span>
+</div>
+</div>
+<!-- Moved Down: Hardware Subsystem Telemetry & Bus Health Matrix -->
+<div class="w-full bg-surface-panel border border-surface-border rounded p-3.5 flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between pb-2 mb-2 border-b border-surface-border">
+<div class="text-xs font-semibold text-slate-200">Hardware Subsystem Telemetry &amp; Bus Health Matrix</div>
+<span class="font-mono text-[10px] text-emerald-400 font-medium px-1.5 py-0.5 rounded bg-emerald-950/50 border border-emerald-800/60">8 OF 8 SENSORS VERIFIED</span>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left font-mono text-[11px]">
+<thead>
+<tr class="text-slate-400 border-b border-surface-border">
+<th class="py-1.5 font-medium">Subsystem Line</th>
+<th class="py-1.5 font-medium">Hardware / Bus</th>
+<th class="py-1.5 font-medium">Live Telemetry</th>
+<th class="py-1.5 font-medium">Expected / Tol</th>
+<th class="py-1.5 font-medium text-right">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-border/50 text-slate-300">
+<tr>
+<td class="py-1.5 font-sans font-medium text-slate-200">Inertial Guidance Unit</td>
+<td class="py-1.5 text-slate-400">MPU-6050 • I2C</td>
+<td class="py-1.5 tabular-nums text-slate-100">1.00 g [Z-AXIS]</td>
+<td class="py-1.5 text-slate-400">±0.05 g</td>
+<td class="py-1.5 text-right"><span class="px-1.5 py-0.5 rounded bg-emerald-950/70 text-emerald-400 text-[10px] font-semibold border border-emerald-800/60">NOMINAL</span></td>
+</tr>
+<tr>
+<td class="py-1.5 font-sans font-medium text-slate-200">Power Conditioning</td>
+<td class="py-1.5 text-slate-400">INA219 • I2C</td>
+<td class="py-1.5 tabular-nums text-slate-100">3.31 V / 145 mA</td>
+<td class="py-1.5 text-slate-400">3.30V ±5%</td>
+<td class="py-1.5 text-right"><span class="px-1.5 py-0.5 rounded bg-emerald-950/70 text-emerald-400 text-[10px] font-semibold border border-emerald-800/60">NOMINAL</span></td>
+</tr>
+<tr>
+<td class="py-1.5 font-sans font-medium text-slate-200">Thermal Protection Probe</td>
+<td class="py-1.5 text-slate-400">DS18B20 • 1-Wire</td>
+<td class="py-1.5 tabular-nums text-slate-100">28.5 °C</td>
+<td class="py-1.5 text-slate-400">&lt;60.0 °C</td>
+<td class="py-1.5 text-right"><span class="px-1.5 py-0.5 rounded bg-emerald-950/70 text-emerald-400 text-[10px] font-semibold border border-emerald-800/60">PASS</span></td>
+</tr>
+<tr>
+<td class="py-1.5 font-sans font-medium text-slate-200">Avionics Heartbeat Line</td>
+<td class="py-1.5 text-slate-400">GPIO Pulse • IRQ</td>
+<td class="py-1.5 tabular-nums text-slate-100">100% (0.2s ping)</td>
+<td class="py-1.5 text-slate-400">&gt;98.0%</td>
+<td class="py-1.5 text-right"><span class="px-1.5 py-0.5 rounded bg-emerald-950/70 text-emerald-400 text-[10px] font-semibold border border-emerald-800/60">LOCKED</span></td>
+</tr>
+<tr>
+<td class="py-1.5 font-sans font-medium text-slate-200">CAN Command Bus 2.0B</td>
+<td class="py-1.5 text-slate-400">SN65HVD230 • CAN</td>
+<td class="py-1.5 tabular-nums text-slate-100">1 Mbit/s • 0 err</td>
+<td class="py-1.5 text-slate-400">0 dropped</td>
+<td class="py-1.5 text-right"><span class="px-1.5 py-0.5 rounded bg-emerald-950/70 text-emerald-400 text-[10px] font-semibold border border-emerald-800/60">SYNC</span></td>
+</tr>
+<tr>
+<td class="py-1.5 font-sans font-medium text-slate-200">Rad-Hard Telemetry Blackbox</td>
+<td class="py-1.5 text-slate-400">SPI MicroSD • SPI</td>
+<td class="py-1.5 tabular-nums text-slate-100">5 records / 0 CRC</td>
+<td class="py-1.5 text-slate-400">100% read/write</td>
+<td class="py-1.5 text-right"><span class="px-1.5 py-0.5 rounded bg-emerald-950/70 text-emerald-400 text-[10px] font-semibold border border-emerald-800/60">ACTIVE</span></td>
+</tr>
+<tr>
+<td class="py-1.5 font-sans font-medium text-slate-200">UHF Ground Telemetry Downlink</td>
+<td class="py-1.5 text-slate-400">High-Gain UART • 115200</td>
+<td class="py-1.5 tabular-nums text-slate-100">142.850 MHz • Lock</td>
+<td class="py-1.5 text-slate-400">BER &lt; 10^-6</td>
+<td class="py-1.5 text-right"><span class="px-1.5 py-0.5 rounded bg-emerald-950/70 text-emerald-400 text-[10px] font-semibold border border-emerald-800/60">CARRIER UP</span></td>
+</tr>
+<tr>
+<td class="py-1.5 font-sans font-medium text-slate-200">Hardware Failsafe Watchdog</td>
+<td class="py-1.5 text-slate-400">External WDT • Hardware</td>
+<td class="py-1.5 tabular-nums text-slate-100">0 Traps / 0 Resets</td>
+<td class="py-1.5 text-slate-400">0 fault states</td>
+<td class="py-1.5 text-right"><span class="px-1.5 py-0.5 rounded bg-emerald-950/70 text-emerald-400 text-[10px] font-semibold border border-emerald-800/60">SECURE</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="pt-2 mt-2 border-t border-surface-border flex justify-between items-center text-[10px] font-mono text-slate-400">
+<span class="">INTERFACE STANDARD: MIL-STD-1553B / CAN 2.0B COMPLIANT</span>
+<span class="">CALIBRATION CYCLE: 2025-Q2 CERTIFIED</span>
+</div>
+</div>
+</div>
+<!-- ================= FOOTER / HARDWARE RIG AUTHENTICATION ================= -->
+<footer class="pt-2 pb-1 border-t border-surface-border text-slate-400 text-[11px] font-mono flex flex-wrap justify-between items-center gap-2">
+<div class="flex items-center gap-4">
+<span class="">TEST HARNESS ID: <span class="text-slate-300">BENCH-HMDM-04-REV-C</span></span>
+<span class="hidden sm:inline">•</span>
+<span class="">FPGA BITSTREAM: <span class="text-slate-300">v0.9.4-RC2 (HASH: 8F2D1A)</span></span>
+</div>
+<div class="flex items-center gap-3">
+<span class="px-2 py-0.5 rounded bg-surface-subtle text-slate-300 border border-surface-border text-[10px]">NON-FLIGHT GROUND SUPPORT EQUIPMENT</span>
+<span class="text-slate-400 text-[10px]">STATION ID: WFF-BLDG-F10</span>
+</div>
 </footer>
-
+<!-- ================= SIMULATED LIVE TELEMETRY SCRIPT ================= -->
 <script>
-// ============================================================
-// SIMULATED LIVE DATA
-// This script fakes sensor updates so the dashboard looks alive.
-// In the real system, replace with WebSocket/Serial data feed.
-// ============================================================
-
 const state = {
-  voltage: 3.31,
+  voltage: 3.314,
   current: 145,
   temp: 28.5,
-  vibration: 0.02,
+  vibration: 0.021,
   vibPeak: 1.00,
   heartbeat: 100,
   heartbeatLast: 0.2,
-  uptime: 0,
+  uptime: 754,
   bootCount: 1,
   eventCount: 5,
   activeFaults: 0,
-  voltageHistory: []
+  voltageHistory: [],
+  canPackets: 41209,
+  frozen: false
 };
 
-// Initialize voltage history with 60 flat values
+// Seed 60 rolling samples around 3.30V
 for (let i = 0; i < 60; i++) {
-  state.voltageHistory.push(3.30 + (Math.random() - 0.5) * 0.04);
+  state.voltageHistory.push(3.30 + (Math.random() - 0.5) * 0.035);
 }
 
-// ---------- Chart rendering ----------
 function renderVoltageChart() {
   const container = document.getElementById('voltageChart');
   container.innerHTML = '';
-  const min = 2.8;
-  const max = 3.6;
-  state.voltageHistory.forEach(v => {
+  const min = 3.15;
+  const max = 3.45;
+  
+  state.voltageHistory.forEach((v, idx) => {
     const pct = ((v - min) / (max - min)) * 100;
     const bar = document.createElement('div');
-    bar.className = 'bar';
-    if (v < 3.0) bar.classList.add('warn');
-    if (v < 2.8) bar.classList.add('danger');
-    bar.style.height = Math.max(2, Math.min(100, pct)) + '%';
+    bar.className = 'flex-1 bg-emerald-400 hover:bg-emerald-300 rounded-t-sm transition-all duration-200 cursor-pointer';
+    
+    // Highlight warn thresholds with subtle color shifts
+    if (v < 3.22 || v > 3.38) {
+      bar.className = 'flex-1 bg-amber-500 rounded-t-sm transition-all duration-200';
+    }
+    
+    bar.style.height = Math.max(6, Math.min(100, pct)) + '%';
+    bar.title = `T-${60 - idx}s: ${v.toFixed(3)} V`;
     container.appendChild(bar);
   });
 }
 
-// ---------- Status updater ----------
 function updateStatus() {
-  const pill = document.getElementById('mainStatus');
+  const pill = document.getElementById('mainStatusPill');
+  const dot = document.getElementById('mainStatusDot');
   const text = document.getElementById('statusText');
 
-  // Simulated state logic
-  let status = 'PASS';
+  let status = 'NOMINAL / ALL SENSORS LOCKED';
+  let pillClass = 'border-emerald-800/80 bg-emerald-950/40 text-emerald-400';
+  let dotClass = 'bg-emerald-400';
+
   if (state.voltage < 2.8 || state.heartbeat < 50) {
-    status = 'FAIL';
+    status = 'HARDWARE FAULT DETECTED';
+    pillClass = 'border-rose-800/80 bg-rose-950/40 text-rose-400';
+    dotClass = 'bg-rose-400 animate-pulse';
   } else if (state.voltage < 3.0 || state.temp > 55 || state.vibration > 2.0) {
-    status = 'DEGRADED';
+    status = 'ADVISORY: OUT-OF-RANGE PARAM';
+    pillClass = 'border-amber-800/80 bg-amber-950/40 text-amber-400';
+    dotClass = 'bg-amber-400';
   }
 
-  pill.className = 'status-pill ' + status.toLowerCase();
+  pill.className = `flex items-center gap-2 px-3 py-1.5 rounded border ${pillClass}`;
+  dot.className = `w-2 h-2 rounded-full ${dotClass}`;
   text.textContent = status;
 }
 
-// ---------- Metric updater ----------
 function updateMetrics() {
-  document.getElementById('voltageVal').textContent = state.voltage.toFixed(2);
+  document.getElementById('voltageVal').textContent = state.voltage.toFixed(3);
   document.getElementById('currentVal').textContent = Math.round(state.current);
   document.getElementById('tempVal').textContent = state.temp.toFixed(1);
-  document.getElementById('vibVal').textContent = state.vibration.toFixed(2);
+  document.getElementById('vibVal').textContent = state.vibration.toFixed(3);
   document.getElementById('vibPeak').textContent = state.vibPeak.toFixed(2);
   document.getElementById('heartbeatVal').textContent = Math.round(state.heartbeat);
   document.getElementById('heartbeatLast').textContent = state.heartbeatLast.toFixed(1);
   document.getElementById('bootCount').textContent = state.bootCount;
-  document.getElementById('eventCount').textContent = state.eventCount;
-  document.getElementById('activeFaults').textContent = state.activeFaults;
+  document.getElementById('eventCount').textContent = state.eventCount + ' logged';
+  document.getElementById('activeFaults').textContent = `${state.activeFaults} (0.00%)`;
+  document.getElementById('canFrames').textContent = `${state.canPackets.toLocaleString()} pkts`;
 
-  // Uptime
+  // Update dynamic gauge bars
+  const vPct = Math.min(100, Math.max(0, ((state.voltage - 3.15) / 0.30) * 100));
+  document.getElementById('voltageMeter').style.width = `${vPct}%`;
+
+  const tPct = Math.min(100, Math.max(0, (state.temp / 60) * 100));
+  document.getElementById('tempMeter').style.width = `${tPct}%`;
+
+  const vibPct = Math.min(100, Math.max(0, (state.vibration / 0.5) * 100));
+  document.getElementById('vibMeter').style.width = `${vibPct}%`;
+
+  // Real IMU small fluctuations
+  document.getElementById('axVal').textContent = (0.004 + (Math.random() - 0.5) * 0.006).toFixed(3) + ' g';
+  document.getElementById('ayVal').textContent = (-0.009 + (Math.random() - 0.5) * 0.006).toFixed(3) + ' g';
+  document.getElementById('azVal').textContent = (0.998 + (Math.random() - 0.5) * 0.004).toFixed(3) + ' g';
+
+  // Mission Elapsed Time (MET)
   const h = String(Math.floor(state.uptime / 3600)).padStart(2, '0');
   const m = String(Math.floor((state.uptime % 3600) / 60)).padStart(2, '0');
   const s = String(state.uptime % 60).padStart(2, '0');
-  document.getElementById('uptime').textContent = `${h}:${m}:${s}`;
+  document.getElementById('uptime').textContent = `T+${h}:${m}:${s}`;
+
+  // Live UTC Clock
+  const now = new Date();
+  const utcString = now.toISOString().replace('T', ' ').substring(0, 19) + ' UTC';
+  document.getElementById('utcClock').textContent = utcString;
 }
 
-// ---------- Tick loop ----------
-function tick() {
-  state.uptime += 1;
+function toggleFreeze() {
+  state.frozen = !state.frozen;
+  const btn = document.getElementById('freezeBtn');
+  if (state.frozen) {
+    btn.classList.add('bg-amber-950/40', 'text-amber-300', 'border-amber-700');
+    btn.innerHTML = '<span class="material-symbols-outlined text-[13px]">play_arrow</span> Resume';
+  } else {
+    btn.classList.remove('bg-amber-950/40', 'text-amber-300', 'border-amber-700');
+    btn.innerHTML = '<span class="material-symbols-outlined text-[13px]">pause</span> Freeze';
+  }
+}
 
-  // Simulate small fluctuations
-  state.voltage = 3.31 + (Math.random() - 0.5) * 0.03;
-  state.current = 145 + (Math.random() - 0.5) * 15;
-  state.temp = 28.5 + (Math.random() - 0.5) * 0.5;
-  state.vibration = Math.abs((Math.random() - 0.5) * 0.1);
+function downloadCSV() {
+  let csv = 'Timestamp_Offset_s,Voltage_V,Current_mA\n';
+  state.voltageHistory.forEach((v, i) => {
+    csv += `-${60 - i},${v.toFixed(4)},${state.current}\n`;
+  });
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.setAttribute('href', url);
+  a.setAttribute('download', `hmdm_telemetry_stream_${Date.now()}.csv`);
+  a.click();
+}
+
+function tick() {
+  if (state.frozen) return;
+
+  state.uptime += 1;
+  state.canPackets += Math.floor(45 + Math.random() * 15);
+
+  state.voltage = 3.314 + (Math.random() - 0.5) * 0.024;
+  state.current = 145 + (Math.random() - 0.5) * 10;
+  state.temp = 28.5 + (Math.random() - 0.5) * 0.3;
+  state.vibration = Math.abs((Math.random() - 0.5) * 0.04);
   if (state.vibration > state.vibPeak) state.vibPeak = state.vibration;
 
-  // Push to history
   state.voltageHistory.push(state.voltage);
   if (state.voltageHistory.length > 60) state.voltageHistory.shift();
 
@@ -657,12 +627,12 @@ function tick() {
   updateStatus();
 }
 
-// ---------- Initial render + start loop ----------
+// Initial render & interval
 renderVoltageChart();
 updateMetrics();
 updateStatus();
 setInterval(tick, 1000);
 </script>
 
-</body>
-</html>
+
+</body></html>
